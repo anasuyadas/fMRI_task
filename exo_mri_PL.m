@@ -1,4 +1,4 @@
-function myscreen = exo_mri_pilot_2stim(observer,IndTilt,Eye)
+function myscreen = exo_mri_pilot_2stim(observer,contrast,IndTilt,Eye)
 
 %%% Pilot with only valid and invalid conditions
 % The raised cosine reqires matlabPyrTools
@@ -59,8 +59,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 1;
-task{1}.segmin =     [0.1 .067 .053 .05 .1 .8 .5 .03 1];  % segments: 1:ITI,   2:fixation, 3:Endo cue 4: ISI 5:stimulus, 6:response cue 7:response
-task{1}.segmax =     [0.1 .067 .053 .05 .1 .8 .5 .03 1];  % ITI is variable (btw. 1 and 1.5), rest is constant
+task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .64 .03 1];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .64 .03 1];  % ITI is variable (btw. 1 and 1.5), rest is constant
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 task{1}.synchToVol = zeros(size(task{1}.segquant));
@@ -70,7 +70,7 @@ task{1}.fudgeLastVolume = 1;
 n_repeats = 2; %  trials per block = 48 trials. Number of volumes = (48)+(16*2)+(16*3)+(16*4) = 192 = 4.8mins = 4mins and 48secs
 
 % CHANGE: here as our conditions are very different
-[contrast, iti, location, CueCondition, pre_post, repeat] = ndgrid(1,1:3,1:2,1:2,1:2,1:n_repeats);
+[contrast, iti, location, diagonal, repeat] = ndgrid(1:3,1:3,1:2,1:2,1:n_repeats);
 
 % CHANGE: num trials different
 task{1}.numTrials = length(location(:));
