@@ -70,7 +70,7 @@ task{1}.fudgeLastVolume = 1;
 n_repeats = 2; %  trials per block = 48 trials. Number of volumes = (48)+(16*2)+(16*3)+(16*4) = 192 = 4.8mins = 4mins and 48secs
 
 % CHANGE: here as our conditions are very different
-[contrast, iti, location, diagonal, repeat] = ndgrid(1:3,1:3,1:2,1:2,1:n_repeats);
+[contrast, iti, location, diagonal, repeat] = ndgrid(1:10,1:3,1:2,1:n_repeats);
 
 % CHANGE: num trials different
 task{1}.numTrials = length(location(:));
@@ -78,23 +78,13 @@ random_order = randperm(task{1}.numTrials);
 
 task{1}.randVars.contrast = contrast(random_order);
 
-% CHANGE: 
-task{1}.randVars.pre_post = pre_post(random_order);
 
-% CHANGE: we have just one cue type
-task{1}.randVars.CueCondition = CueCondition(random_order); %1=valid, 2=invalidb% vector from 1:10 with 1:4:valid, 5:8 invalid, 9:10 blank
-task{1}.randVars.iti = iti(random_order); %1, 2 or 3 TR
-
-
-task{1}.randVars.targetLocation = location(random_order); %one of the 4 positions
+task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
 
 % We only need to specify target orientation
 task{1}.randVars.uniform.targetOrientation = 1:2;
 
 % CHANGE: we dont need this
-task{1}.randVars.uniform.distractorOrientation1 = 1:2;
-task{1}.randVars.uniform.distractorOrientation2 = 1:2;
-task{1}.randVars.uniform.distractorOrientation3 = 1:2;
 
 % are these blank trials?
 task{1}.randVars.uniform.random_cueonly_cond = 1:4;
