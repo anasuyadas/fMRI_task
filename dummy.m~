@@ -1,0 +1,100 @@
+myscreen = initScreen('dummy');
+myscreen.allowpause = 0;
+myscreen.saveData = -2;
+myscreen.background=.5;
+
+task{1}.waitForBacktick = 1;
+task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .64 .03 1];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .64 .03 1];  % ITI is variable (btw. 1 and 1.5), rest is constant
+task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
+task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
+task{1}.synchToVol = zeros(size(task{1}.segquant));
+task{1}.synchToVol(end) = 0;
+task{1}.fudgeLastVolume = 1;
+
+n_repeats = 2; %  trials per block = 48 trials. Number of volumes = (48)+(16*2)+(16*3)+(16*4) = 192 = 4.8mins = 4mins and 48secs
+
+% CHANGE: here as our conditions are very different
+[contrast, iti, location,repeat] = ndgrid(1:2,1:3,1:2,1:n_repeats);
+
+% CHANGE: num trials different
+task{1}.numTrials = length(location(:));
+random_order = randperm(task{1}.numTrials);
+
+task{1}.randVars.contrast = contrast(random_order)
+
+task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
+
+% We only need to specify target orientation
+task{1}.randVars.uniform.targetOrientation = 1:2;
+
+
+
+task{1}.randVars.len_ = task{1}.numTrials;
+stimulus.trialend = 0;
+stimulus.trialnum=1;
+stimulus.FixationBreak=zeros(1,length(location(:)));
+stimulus.LocationIndices=unique(location);
+
+
+task{1}.random = 1;
+
+%%
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
+
+%%
+myscreen = initStimulus('stimulus',myscreen);
+stimulus = initStimulus(stimulus,myscreen);
+
+
+function [task, myscreen] = StartSegmentCallback(task, myscreen)
+% segments: 1:ITI,   2:fixation,    3:stimulus, 4:response
+global stimulus;
+
+if (task.thistrial.thisseg == 9) % ITI
+    stimulus.trialend = stimulus.trialend + 1;
+elseif (task.thistrial.thisseg == 1) % fixation
+    
+ 
+        iti = task.thistrial.iti;
+    
+    
+    %if task.thistrial.pre_post==1% pre-cue
+%         task.thistrial.order_cue = 2;
+%         task.thistrial.order_stim = 4;
+        task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .64 .03 iti]; 
+%     elseif task.thistrial.pre_post==2% post-cue
+%         task.thistrial.order_cue = 2;
+%         task.thistrial.order_stim = 4;
+%         task.thistrial.seglen = [0.1 .05 .053 .067 .1 .6 .5 .03 iti];
+%     end;
+    
+    stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
+    %stimulus.tmp.distractorIndices=stimulus.LocationIndices(stimulus.LocationIndices~=task.thistrial.targetLocation);
+%     for Locs=1:length(stimulus.tmp.distractorIndices)
+%         stimulus.tmp.distractorLocations{Locs}= stimulus.eccentricity*[stimulus.locations{stimulus.tmp.distractorIndices(Locs)}];
+%     end
+    stimulus.FixationStarted=0;
+    %response cue
+    stimulus.tmp.respcueLocation=stimulus.respcueLocation{task.thistrial.targetLocation}; %if polygon
+    stimulus.tmp.respcueLocation=task.thistrial.targetLocation; %if central x
+    stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
+    for i=1:4
+        stimulus.tmp.NeutralcueLocation{i}=stimulus.NeutralcueLocation{i};
+    end
+% %     if task.thistrial.CueCondition==1%valid
+        stimulus.tmp.ExocueLocation=stimulus.ExocueLocation{task.thistrial.targetLocation};
+%     elseif task.thistrial.CueCondition==2 %invalid % CHANGE
+%         possibleLoc = [1 2];
+%         potentialLoc = possibleLoc(possibleLoc~=task.thistrial.targetLocation);
+%         stimulus.tmp.ExocueLocation=stimulus.ExocueLocation{randsample(potentialLoc,1)};
+%     end
+elseif (task.thistrial.thisseg == 8) % response
+    stimulus.trialnum = stimulus.trialnum + 1;
+    if ~task.thistrial.gotResponse
+        mglPlaySound(stimulus.noanswer);
+    end;
+end
+
+mglClearScreen(stimulus.grayColor);
+setGammaTable(1);
