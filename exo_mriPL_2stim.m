@@ -50,7 +50,7 @@ clear task myscreen;
 % initalize the screen
 
 stimulus.EyeTrack=Eye;
-myscreen = initScreen('CMU_CRT');
+myscreen = initScreen('dummy');
 myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
