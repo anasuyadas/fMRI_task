@@ -9,7 +9,7 @@ function myscreen = pl_MRI_stair_Ori(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,29.845,35.56) %distance from screen, height & width of monitor
+mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & width of monitor
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
@@ -106,7 +106,7 @@ stimulus.LocationIndices=unique(location);
 
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@generateStimulusCallBack,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@staircaseCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@staircaseCallback);
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
@@ -135,37 +135,6 @@ clear stimulus.tmp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 myscreen = endTask(myscreen,task);
 end
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Generate stimulus -> before trial starts
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function [task,stimulus] = generateStimulusCallBack(task,stimulus)
-%takes current threshold estimate of the staircase & the orientation (cw or ccw relative to reference) and computes the table of pixel values for the grating  
-    
-
-res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
-stimulus.sizedg = 3;
-[Xtbl,Ytbl] = rcosFn(30, (stimulus.sizedg)/2, [1 0]); %2 = sharp transition (edge effect?) / 50 = radius of the circle in pixel
-grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
-
-
-% making the texture for all the Gabor stimuli:
-disppercent(-inf,'Calculating gabors');
-for thisSF = 1:length(stimulus.sf)
-    for thisContrast = 0:stimulus.deltaGratingColors
-        %% stimulus.texture
-        grating(:,:,1) = stimulus.midGratingColors+gratingMatrix{thisSF}*thisContrast;
-        grating(:,:,2) = grating(:,:,1);
-        grating(:,:,3) = grating(:,:,1);
-        stimulus.tex{thisSF}(thisContrast+1) = mglCreateTexture(grating);
-        disppercent(thisContrast/stimulus.deltaGratingColors);
-    end
-end
-
-end
-
-
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TASK 1: function that gets called at the start of each segment
@@ -213,41 +182,41 @@ global stimulus;
 mglClearScreen(stimulus.grayColor);%###
 
 if (task.thistrial.thisseg == 9) % ITI
-    drawFixation;
+    drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
-    drawPreCue(stimulus.tmp.targetLocation);
+    drawPreCue(stimulus.thistrial.targetLocation);
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
               stimulus.rotation(task.thistrial.targetOrientation)*stimulus.stair.threshold,1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
     
 elseif (task.thistrial.thisseg == 6) % Resp Cue
-    drawFixation;
+    drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
-    drawRespCue(stimulus.tmp.targetLocation);
+    drawRespCue(stimulus.thistrial.targetLocation); % has to be a positive integer
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
-    drawFixation;
+    drawFixation(task);
     
 elseif (task.thistrial.thisseg == 8) % Feedback
-    drawFixation;
+    drawFixation(task);
 
 end
     
@@ -259,10 +228,20 @@ end
 % response call back
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [task,stimulus] = responseCallback(task,stimulus)
-%
+global stimulus;
+mglClearScreen(stimulus.grayColor); %###
+'
+if ~task.thistrial.gotResponse
+    
+    % check response correct or not
+    if task.thistrial.contrast ==  3 %cue-only
+        stimulus.tmp.response = task.thistrial.whichButton == 3; %press 3 to have the same motor response as in the main conditions
+    else
+        stimulus.tmp.response = task.thistrial.whichButton == (task.thistrial.targetOrientation); %1 for left and 2 for right
+    end;
+    
+end
 
-    
-    
 end
 
 
@@ -356,6 +335,33 @@ stimulus.locationsEcc = cell(4,1);
 for loc = 1:4;
     stimulus.locationsEcc{loc} = [stimulus.locations{loc}(1)*stimulus.eccentricity,...
                                    stimulus.locations{loc}(2)*stimulus.eccentricity];
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% make stim texture
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for thisSF = 1:length(stimulus.sf)      %only one spatial frequency
+    gratingMatrix{thisSF} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),stimulus.orientation,stimulus.phase);
+end
+
+res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
+stimulus.sizedg = 3;
+[Xtbl,Ytbl] = rcosFn(30, (stimulus.sizedg)/2, [1 0]); %2 = sharp transition (edge effect?) / 50 = radius of the circle in pixel
+grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
+
+
+
+disppercent(-inf,'Calculating gabors');
+for thisSF = 1:length(stimulus.sf)
+    for thisContrast = 0:stimulus.deltaGratingColors
+        % stimulus.texture
+        grating(:,:,1) = stimulus.midGratingColors+gratingMatrix{thisSF}*thisContrast;
+        grating(:,:,2) = grating(:,:,1);
+        grating(:,:,3) = grating(:,:,1);
+        stimulus.tex{thisSF}(thisContrast+1) = mglCreateTexture(grating);
+        disppercent(thisContrast/stimulus.deltaGratingColors);
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,9 +482,8 @@ stimulus.currentMaxContrast = maxContrast;
 end
 
 %% draw fixation
-function drawFixation
+function drawFixation(task)
     global stimulus
-    global task
     
     if ~task.thistrial.gotResponse
         mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.white); %if there is no response & it is not the response window or feedback window, just present white fixation
@@ -525,11 +530,11 @@ function drawPreCue(loc)
     global stimulus
     
     if stimulus.preCue == 0
-        mglLines2(stimulus.preCueNeutLocation{loc}(1),stimulus.preCueNeutLocation{loc}(2),...
-                  stimulus.preCueNeutLocation{loc}(3),stimulus.preCueNeutLocation{loc}(4),1,stimulus.white);
+        mglLines2(stimulus.preCueNeutLocation{loc}(1),stimulus.preCueNeutLocation{loc}(3),...
+                  stimulus.preCueNeutLocation{loc}(4),stimulus.preCueNeutLocation{loc}(5),1,stimulus.white);
     elseif stimulus.preCue == 1
-        mglLines2(stimulus.preCueExgLocation{loc}(1),stimulus.preCueExgLocation{loc}(2),...
-                  stimulus.preCueExgLocation{loc}(3),stimulus.preCueExgLocation{loc}(4),1,stimulus.white);
+        mglLines2(stimulus.preCueExgLocation{loc}(1),stimulus.preCueExgLocation{loc}(3),...
+                  stimulus.preCueExgLocation{loc}(2),stimulus.preCueExgLocation{loc}(4),1,stimulus.white);
     end
 
 end
@@ -560,7 +565,7 @@ end
 function drawRespCue(loc)
     global stimulus
     
-    mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(2),...
-              stimulus.respcueLocation{loc}(3), stimulus.respcueLocation{loc}(4),1,stimulus.black);
+    mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
+              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),1,stimulus.black);
     
 end
