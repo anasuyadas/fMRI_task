@@ -106,14 +106,14 @@ stimulus.LocationIndices=unique(location);
 
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@staircaseCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 myscreen = initStimulus('stimulus',myscreen);%initStimulus('stimulus',myscreen,indContrast,diagonal);
-stimulus = myInitStimulus(stimulus,myscreen,task);
+stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
 
 myscreen = eyeCalibDisp(myscreen);
 
@@ -147,7 +147,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .64 .03 iti];
+    task.thistrial.seglen =[0.1 .06 .04 2 .3 .3 .64 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
     
@@ -190,7 +190,7 @@ elseif (task.thistrial.thisseg == 1) % Initial Fixation
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
-    drawPreCue(stimulus.thistrial.targetLocation);
+    drawPreCue(task.thistrial.targetLocation);
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
@@ -210,7 +210,7 @@ elseif (task.thistrial.thisseg == 5) % ISI 2
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
-    drawRespCue(stimulus.thistrial.targetLocation); % has to be a positive integer
+    drawRespCue(task.thistrial.targetLocation); % has to be a positive integer
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
@@ -230,7 +230,6 @@ end
 function [task,stimulus] = responseCallback(task,stimulus)
 global stimulus;
 mglClearScreen(stimulus.grayColor); %###
-'
 if ~task.thistrial.gotResponse
     
     % check response correct or not
@@ -241,7 +240,7 @@ if ~task.thistrial.gotResponse
     end;
     
 end
-
+stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
 end
 
 
@@ -252,7 +251,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [task,stimulus] = staircaseCallback(task,stimulus)
-
+global stimulus;
 stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
 
 end
@@ -279,7 +278,7 @@ stimulus.linearizedGammaTable.blueTable(1:3) = 0;
 % 
 % centerpix = [myscreen.screenWidth/2,myscreen.screenHeight/2];
 
-
+stimulus.contrasts =contrast;
 
 stimulus.frameThick = .08;
 stimulus.reservedColors = [0 0 0; 1 1 1; 0 .6 0];
@@ -531,7 +530,7 @@ function drawPreCue(loc)
     
     if stimulus.preCue == 0
         mglLines2(stimulus.preCueNeutLocation{loc}(1),stimulus.preCueNeutLocation{loc}(3),...
-                  stimulus.preCueNeutLocation{loc}(4),stimulus.preCueNeutLocation{loc}(5),1,stimulus.white);
+                  stimulus.preCueNeutLocation{loc}(2),stimulus.preCueNeutLocation{loc}(4),1,stimulus.white);
     elseif stimulus.preCue == 1
         mglLines2(stimulus.preCueExgLocation{loc}(1),stimulus.preCueExgLocation{loc}(3),...
                   stimulus.preCueExgLocation{loc}(2),stimulus.preCueExgLocation{loc}(4),1,stimulus.white);
