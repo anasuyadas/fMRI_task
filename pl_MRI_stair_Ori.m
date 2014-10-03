@@ -73,7 +73,6 @@ task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
 
-
 n_repeats = 15;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
@@ -107,16 +106,30 @@ stimulus.LocationIndices=unique(location);
 
 task{1}.random = 1;
 [task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% STAIRCASE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+stair.upRule = 1;
+stair.downRule = 3;
+stair.startThresh = 10;
+stair.stepSize = 2;
+stair.minStepSize = .1;
+stair.halfRule = 'levitt';
+
+stimulus.stair = upDownStaircase(stair.upRule,stair.downRule,stair.startThresh,[stair.stepSize, stair.minStepSize],stair.halfRule);
+stimulus.stair.minThreshold = .04; stimulus.stair.maxThreshold = 10;
+
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 myscreen = initStimulus('stimulus',myscreen);%initStimulus('stimulus',myscreen,indContrast,diagonal);
-stimulus = myInitStimulus(stimulus,myscreen,task,indContrast,indTilt);
+stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
 
 myscreen = eyeCalibDisp(myscreen);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,6 +138,7 @@ while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
     [task,myscreen,phaseNum] = updateTask(task,myscreen,phaseNum);
+    
     % flip screen
     myscreen = tickScreen(myscreen,task);
 end
@@ -147,7 +161,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .64 .03 iti];
+    task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
     
@@ -201,7 +215,7 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     if stimulus.EyeTrack, fixCheck; end
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
-              stimulus.rotation(task.thistrial.targetOrientation)*stimulus.stair.threshold,1);
+              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.stair.threshold)),1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
@@ -227,7 +241,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % response call back
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [task,stimulus] = responseCallback(task,stimulus)
+function [task, myscreen] = responseCallback(task,myscreen)
 global stimulus;
 mglClearScreen(stimulus.grayColor); %###
 if ~task.thistrial.gotResponse
@@ -241,6 +255,7 @@ if ~task.thistrial.gotResponse
     
 end
 stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
+disp(sprintf('threshold for this trial is %s',stimulus.stair.threshold));
 end
 
 % %%
@@ -257,6 +272,6 @@ function drawRespCue(loc)
     global stimulus
     
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
-              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),1,stimulus.black);
+              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
     
 end

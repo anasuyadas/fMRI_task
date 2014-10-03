@@ -17,4 +17,6 @@ if round(stimulus.nDisplayContrasts*desiredContrast/stimulus.currentMaxContrast)
 end
 
 mglBltTexture(stimulus.tex{sf}(displayContrastNum+1),position,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
+
+disp(sprintf('orientation for this trial is %d',orientation));
 end

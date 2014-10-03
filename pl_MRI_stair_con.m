@@ -1,4 +1,4 @@
-function myscreen = pl_MRI(observer,varargin)
+function myscreen = pl_MRI_stair_con(observer,varargin)
 
 %%% Pilot with only valid and invalid conditions
 % The raised cosine reqires matlabPyrTools
@@ -9,7 +9,7 @@ function myscreen = pl_MRI(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,[26 42]); %distance from screen, height & width of monitor
+mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & width of monitor
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
@@ -18,9 +18,9 @@ mglVisualAngleCoordinates(57,[26 42]); %distance from screen, height & width of 
 % 
 % eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
-if ieNotDefined('indContrast'),indContrast = [0.1 0.2 0.4 0.6 0.7 0.8 1];end % initialize some default contrast vals
+if ieNotDefined('indContrast'),indContrast = .8;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
-if ieNotDefined('indTilt'),indTilt = 5;end % default tilt
+if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
 
 thisdir = pwd;
@@ -51,7 +51,7 @@ clear task myscreen;
 % initalize the screen
 
 stimulus.EyeTrack=Eye;
-myscreen = initScreen('disp2');
+myscreen = initScreen('CMU_CRT');
 myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
@@ -74,20 +74,21 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 15;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
+
 if diagonal == 1  
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,1:3,1:n_repeats);
+    [contrast,ori,location,trialNum] = ndgrid(1,1:2,[1,3],1:n_repeats);
 else 
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,2:4,1:n_repeats);
+    [contrast,ori,location,trialNum] = ndgrid(1,1:2,[2,4],1:n_repeats);
 end
 %contrast =3 is blank trials. We wants on ~10% of total trials to be blank
 %trials. Re-assign 4 out of 6 blank trials to be non-blank stim containing
 %trials
-contrast(3,:,[1:2],1)=1;
-contrast(3,:,[1:2],2)=2; 
+% contrast(3,:,[1:2],1)=1;
+% contrast(3,:,[1:2],2)=2; 
 
 
 task{1}.numTrials = length(location(:)); % n*n_repeats
@@ -97,15 +98,27 @@ task{1}.randVars.targetLocation = location(random_order); %one of the 2 position
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.contrast = contrast(random_order);
 task{1}.randVars.targetOrientation = ori(random_order);
-task{1}.randVars.iti= iti(random_order)
-task{1}.randVars.iti= task{1}.randVars.iti.*1.5 % replace if TR changes
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% STAIRCASE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% set individual tilt
+
 stimulus.indTilt=indTilt;
+stair.upRule = 1;
+stair.downRule = 2;
+stair.startThresh = 40;
+stair.stepSize = 10;
+stair.minStepSize = .1;
+stair.halfRule = 'levitt';
+
+stimulus.stair = upDownStaircase(stair.upRule,stair.downRule,stair.startThresh,[stair.stepSize, stair.minStepSize],stair.halfRule);
+stimulus.stair.minThreshold = .5; stimulus.stair.maxThreshold = 50;
 
 
 task{1}.random = 1;
@@ -115,7 +128,7 @@ task{1}.random = 1;
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-myscreen = initStimulus('stimulus',myscreen); %initStimulus('stimulus',myscreen,indContrast,diagonal);
+myscreen = initStimulus('stimulus',myscreen);%initStimulus('stimulus',myscreen,indContrast,diagonal);
 stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
 
 myscreen = eyeCalibDisp(myscreen);
@@ -128,6 +141,7 @@ while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
     [task,myscreen,phaseNum] = updateTask(task,myscreen,phaseNum);
+    
     % flip screen
     myscreen = tickScreen(myscreen,task);
 end
@@ -149,8 +163,8 @@ global stimulus
 if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
-    iti =task.thistrial.iti;%iti = .6;
-    task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .64 .03 iti];
+    iti = .6;%task.thistrial.iti;
+    task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
     
@@ -169,7 +183,7 @@ elseif (task.thistrial.thisseg == 1) % fixation
 elseif (task.thistrial.thisseg == 8) % response
     stimulus.trialnum = stimulus.trialnum + 1;
     if ~task.thistrial.gotResponse
-       %mglPlaySound(stimulus.noanswer);
+        mglPlaySound(stimulus.noanswer);
     end;
 end
 
@@ -189,33 +203,32 @@ if (task.thistrial.thisseg == 9) % ITI
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck; end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck; end
     drawPreCue(task.thistrial.targetLocation);
     
-elseif (task.thistrial.thisseg == 3) % ISI 1 
+elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck; end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
-    drawGabor(stimulus.contrasts(task.thistrial.contrast),...
+    if stimulus.EyeTrack, fixCheck; end
+    % the contrast value is the threshold itself
+    drawGabor(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
-              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)) ,1);
-          % the above line of code adds or subtracts the tilt from the base
-          % orientation
+              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck; end
     
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
-%     if stimulus.EyeTrack, fixCheck; end
-    drawRespCue(task.thistrial.targetLocation);
+    if stimulus.EyeTrack, fixCheck; end
+    drawRespCue(task.thistrial.targetLocation); % has to be a positive integer
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
@@ -235,7 +248,6 @@ end
 function [task, myscreen] = responseCallback(task,myscreen)
 global stimulus;
 mglClearScreen(stimulus.grayColor); %###
-%
 if ~task.thistrial.gotResponse
     
     % check response correct or not
@@ -246,9 +258,20 @@ if ~task.thistrial.gotResponse
     end;
     
 end
-
+stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
+disp(sprintf('threshold for this trial is %s',stimulus.stair.threshold));
 end
 
+% %%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % staircase call back
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% function [task,stimulus] = staircaseCallback(task,stimulus)
+% global stimulus;
+% stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
+% 
+% end
 function drawRespCue(loc)
     global stimulus
     
