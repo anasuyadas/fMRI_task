@@ -18,10 +18,13 @@ mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & wid
 % 
 % eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
-if ieNotDefined('indContrast'),indContrast = [0.1 0.2 0.4 0.6 0.7 0.8 1];end % initialize some default contrast vals
+if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+
+contLevels = makeContLevels(indContrast); %  min = 1.5% , max = 80%
+
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -113,8 +116,8 @@ task{1}.random = 1;
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-myscreen = initStimulus('stimulus',myscreen);%initStimulus('stimulus',myscreen,indContrast,diagonal);
-stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
+myscreen = initStimulus('stimulus',myscreen);
+stimulus = myInitStimulus(stimulus,myscreen,task,contLevels);
 
 myscreen = eyeCalibDisp(myscreen);
 
@@ -262,4 +265,26 @@ function drawRespCue(loc)
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
               stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
     
+end
+%% makeContLevels
+function [contLevels] = makeContLevels(indThresh,varargin)
+%makes a vector of contrast values (between 0 and 1), dependent on the
+%contrast threshold 'indThresh'
+%max & min contrast
+
+
+% threshCont = .10;
+threshCont = indThresh;
+
+if ieNotDefined('minCont'), minCont = .015; end
+if ieNotDefined('maxCont'), maxCont = .80; end
+
+
+cont2 = 10^(log10(minCont*100)+.25*(log10(threshCont*100) - log10(minCont*100)))/100;
+cont3 = 10^(log10(threshCont*100)-.25*(log10(threshCont*100) - log10(minCont*100)))/100;
+cont5 = 10^(log10(threshCont*100)+.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
+cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
+
+
+contLevels = [minCont,cont2,cont3,threshCont,cont5,cont6,maxCont];
 end
