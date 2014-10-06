@@ -18,5 +18,5 @@ end
 
 mglBltTexture(stimulus.tex{sf}(displayContrastNum+1),position,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
 
-disp(sprintf('orientation for this trial is %d',orientation));
+disp(sprintf('orientation for this trial is %f',desiredContrast));
 end
