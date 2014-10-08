@@ -9,7 +9,7 @@ function myscreen = pl_MRI_constStim(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & width of monitor
+
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
@@ -24,7 +24,6 @@ if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
 
 contLevels = makeContLevels(indContrast); %  min = 1.5% , max = 80%
-
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -59,7 +58,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-
+mglVisualAngleCoordinates(57) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
@@ -207,7 +206,7 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     % the contrast value is the threshold itself
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
-              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
+              ((stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);

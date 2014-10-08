@@ -9,7 +9,7 @@ function myscreen = pl_MRI_stair_con(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & width of monitor
+
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
@@ -56,7 +56,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-
+mglVisualAngleCoordinates(57) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
@@ -219,7 +219,7 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     % the contrast value is the threshold itself
     drawGabor(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
-              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
+              ((stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
