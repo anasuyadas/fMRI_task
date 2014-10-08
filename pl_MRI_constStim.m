@@ -9,22 +9,22 @@ function myscreen = pl_MRI_constStim(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,[29.845 35.56]) %distance from screen, height & width of monitor
+
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
 %     return
 % % end
 % 
-% eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
+eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
 if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+if ieNotDefined('cueType'),cueType = 0;end
 
 contLevels = makeContLevels(indContrast); %  min = 1.5% , max = 80%
-
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -59,7 +59,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-
+mglVisualAngleCoordinates(57) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
@@ -108,6 +108,7 @@ stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
 [task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
@@ -207,7 +208,7 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     % the contrast value is the threshold itself
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
-              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
+              ((stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);

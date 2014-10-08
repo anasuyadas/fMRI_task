@@ -10,19 +10,19 @@ function myscreen = pl_MRI(observer,varargin)
 global stimulus;
 global MGL;
 
-mglVisualAngleCoordinates(57,[26 42]); %distance from screen, height & width of monitor
 % check arguments
 % if ~any(nargin == 3)
 %     help transientAttention
 %     return
 % % end
 % 
-% eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
+eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
 if ieNotDefined('indContrast'),indContrast = [0.2 0.5 1];end % initialize some default contrast vals
-if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
+if ieNotDefined('diagonal'), diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 5;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+if ieNotDefined('cueType'),cueType = 0;end
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -41,7 +41,7 @@ end
 disp(sprintf('[ DATA ] saving data in: %s',datadirname));
 
 stimulus = [];
-stimulus.Tilt=indTilt;
+%stimulus.Tilt=indTilt;
 
 % clearing old variables:
 clear task myscreen;
@@ -57,7 +57,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-
+mglVisualAngleCoordinates(57);%,[37.51, 31.11]); %[26 42] %distance from screen, height & width of monitor
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
@@ -80,9 +80,9 @@ n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
 if diagonal == 1  
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,1:3,1:n_repeats);
+    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,[1,3],1:n_repeats);
 else 
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,2:4,1:n_repeats);
+    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,[2,4],1:n_repeats);
 end
 %contrast =3 is blank trials. We wants on ~10% of total trials to be blank
 %trials. Re-assign 4 out of 6 blank trials to be non-blank stim containing
@@ -98,8 +98,8 @@ task{1}.randVars.targetLocation = location(random_order); %one of the 2 position
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.contrast = contrast(random_order);
 task{1}.randVars.targetOrientation = ori(random_order);
-task{1}.randVars.iti= iti(random_order)
-task{1}.randVars.iti= task{1}.randVars.iti.*1.5 % replace if TR changes
+task{1}.randVars.iti= iti(random_order);
+task{1}.randVars.iti= task{1}.randVars.iti.*1.5; % replace if TR changes
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
@@ -107,6 +107,7 @@ stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
 
 
 task{1}.random = 1;
@@ -205,7 +206,8 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
 %     if stimulus.EyeTrack, fixCheck; end
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
-              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)) ,1);
+              ((stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)) ,1);
+%              (stimulus.orientation+(stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)) ,1);
           % the above line of code adds or subtracts the tilt from the base
           % orientation
     

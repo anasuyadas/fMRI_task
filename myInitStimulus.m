@@ -57,17 +57,17 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 10;%4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 10;%4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 4;%4;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 4;%4;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
-stimulus.sizedg = 20;%should be reset to 3degs
+stimulus.sizedg = 4;%should be reset to 3degs
 
-stimulus.rotation = [-1 1]; % this is the tilt orientation of the gabor stimulus from vertical in Degrees
+stimulus.rotation = [1,-1]; % this is the tilt orientation of the gabor stimulus from vertical in Degrees
 stimulus.init = 1;
 
 stimulus.sf = 4;                % in cpd
-stimulus.orientation = 90;       % in deg
+stimulus.orientation = 0;       % in deg
 stimulus.phase = 0;             % in deg
 stimulus.eccentricity = 4.6;    % in deg
 
@@ -82,14 +82,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % make stim texture
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+gratingMatrix = cell(1,length(stimulus.sf));
 for thisSF = 1:length(stimulus.sf)      %only one spatial frequency
-    gratingMatrix{thisSF} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),stimulus.orientation,stimulus.phase);
+    gratingMatrix{thisSF} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),90,stimulus.phase); %orienation set to 0 => rotated in drawGabor
 end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
-[Xtbl,Ytbl] = rcosFn(30, (stimulus.sizedg)/2, [1 0]); %2 = sharp transition (edge effect?) / 50 = radius of the circle in pixel
+[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1),(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 
@@ -111,7 +111,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 stimulus.FCwidth = 1;
 stimulus.FClinewidth = 3;
-stimulus.TrialStartFixDist=2; %2 degree radius in which to fixate befire trial starts
+stimulus.TrialStartFixDist=2; %2 degree radius in which to fixate before trial starts
 stimulus.TrialStartFixDur=.25;
 stimulus.cornerDist=1;
 stimulus.edgeDist=0;%presents stimuli after this duration when fixation detected
@@ -142,7 +142,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % set parameters -> in degrees
-stimulus.preCue.type = 0; %always neutral for staircase
+% stimulus.preCue.type = 1; %should be always neutral for staircase
 respCue.width =3;
 
 preCue.length = .8;
