@@ -16,7 +16,7 @@ global MGL;
 %     return
 % % end
 % 
-% eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
+eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
 if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED

@@ -14,9 +14,9 @@ global MGL;
 % if ~any(nargin == 3)
 %     help transientAttention
 %     return
-% % end
-% 
-% eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
+% end
+
+eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
 if ieNotDefined('indContrast'),indContrast = .8;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
