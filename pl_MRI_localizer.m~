@@ -19,9 +19,8 @@ mglVisualAngleCoordinates(57,[26 42]); %distance from screen, height & width of 
 % 
 % eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
-if ieNotDefined('indContrast'),indContrast = [0.2 0.5 1];end % initialize some default contrast vals
+if ieNotDefined('indContrast'),indContrast = [0.5];end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
-if ieNotDefined('indTilt'),indTilt = 5;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
 
 thisdir = pwd;
@@ -68,45 +67,41 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 1;
-task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
-task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  
-task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
-task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
+task{1}.segmin =     [8 8];  % run the localizer for each diagonal in each block
+task{1}.segmax =     [8 8];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
+task{1}.segquant =   [0 0];
+task{1}.getResponse = [0 0];
+task{1}.synchToVol = ones(size(task{1}.segquant));
+% task{1}.synchToVol(end) = 1;
+task{1}.fudgeLastVolume = 1;
+
+n_repeats = 3;
+
+
+[contrast,location,repeats] = ndgrid(1,1:2,1:n_repeats);
 
 
 
-n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
-% Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
-%n_repeats will have to be adjusted depending on our TR to keep block
-%length approximately ~5minutes
-if diagonal == 1  
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,1:3,1:n_repeats);
-else 
-    [contrast, iti, ori,location,repeats] = ndgrid(1:3,1:3,1:2,2:4,1:n_repeats);
-end
 %contrast =3 is blank trials. We wants on ~10% of total trials to be blank
 %trials. Re-assign 4 out of 6 blank trials to be non-blank stim containing
 %trials
-contrast(3,:,[1:2],1)=1;
-contrast(3,:,[1:2],2)=2; 
-
 
 task{1}.numTrials = length(location(:)); % n*n_repeats
 random_order = randperm(task{1}.numTrials);
  
 task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
 task{1}.randVars.len_ = task{1}.numTrials;
+
 task{1}.randVars.contrast = contrast(random_order);
-task{1}.randVars.targetOrientation = ori(random_order);
-task{1}.randVars.iti= iti(random_order)
-task{1}.randVars.iti= task{1}.randVars.iti.*1.5 % replace if TR changes
+
+%we want a block design. 
+% task{1}.randVars.uniform.targetOrientation = 1:2;
+% task{1}.randVars.iti= iti(random_order)
+% task{1}.randVars.iti= task{1}.randVars.iti.*1.5 % replace if TR changes
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
-stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
-
-stimulus.indTilt=indTilt;
 
 
 task{1}.random = 1;
@@ -147,9 +142,11 @@ function [task, myscreen] = StartSegmentCallback(task, myscreen)
 % segments: 1:ITI,   2:fixation,    3:stimulus, 4:response
 global stimulus
 
-if (task.thistrial.thisseg == 9) % ITI
-    stimulus.trialend = stimulus.trialend + 1;
-elseif (task.thistrial.thisseg == 1) % fixation
+
+task.thistrial.targetLocation1 = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
+task.thistrial.targetLocation2 = 2;
+
+ (task.thistrial.thisseg == 1) % fixation
     iti =task.thistrial.iti;%iti = .6;
     task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .64 .03 iti];
     %need to make sure that there are only two locations per run
@@ -167,12 +164,12 @@ elseif (task.thistrial.thisseg == 1) % fixation
     end
     
     
-elseif (task.thistrial.thisseg == 8) % response
+(task.thistrial.thisseg == 8) % response
     stimulus.trialnum = stimulus.trialnum + 1;
     if ~task.thistrial.gotResponse
        %mglPlaySound(stimulus.noanswer);
     end;
-end
+
 
 mglClearScreen(stimulus.grayColor);
 setGammaTable(1);
