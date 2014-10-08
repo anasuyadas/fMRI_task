@@ -142,7 +142,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % set parameters -> in degrees
-stimulus.preCue.type = 1; %always neutral for staircase
+% stimulus.preCue.type = 1; %should be always neutral for staircase
 respCue.width =3;
 
 preCue.length = .8;

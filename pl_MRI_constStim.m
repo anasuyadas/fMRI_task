@@ -22,6 +22,7 @@ if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default co
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+if ieNotDefined('cueType'),cueType = 0;end
 
 contLevels = makeContLevels(indContrast); %  min = 1.5% , max = 80%
 
@@ -107,6 +108,7 @@ stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
 [task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);

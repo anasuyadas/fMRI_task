@@ -21,6 +21,7 @@ if ieNotDefined('indContrast'),indContrast = [0.2 0.5 1];end % initialize some d
 if ieNotDefined('diagonal'), diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 5;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+if ieNotDefined('cueType'),cueType = 0;end
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -105,6 +106,7 @@ stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
 
 
 task{1}.random = 1;

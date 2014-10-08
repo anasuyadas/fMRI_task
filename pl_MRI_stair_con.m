@@ -22,6 +22,7 @@ if ieNotDefined('indContrast'),indContrast = .8;end % initialize some default co
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
+if ieNotDefined('cueType'),cueType = 0;end
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -110,6 +111,7 @@ stimulus.LocationIndices=unique(location);
 % set individual tilt
 
 stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
 stair.upRule = 1;
 stair.downRule = 2;
 stair.startThresh = 40;
