@@ -129,7 +129,7 @@ phaseNum = 1;
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
-    [task,myscreen,phaseNum] = updateTask(task,myscreen,phaseNum);
+    [task,myscreen,phaseNum] = updateTaskHack(task,myscreen,phaseNum);
     
     % flip screen
     myscreen = tickScreen(myscreen,task);
