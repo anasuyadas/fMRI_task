@@ -2,6 +2,10 @@
 function drawFixation(task)
     global stimulus
     
+     mglTextSet('Helvetica',14,[0 0.5 1 1],0,0,0,0,0,0,0);
+    thisText = mglText('please fixate');
+    
+    
     if ~task.thistrial.gotResponse
         mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.white); %if there is no response & it is not the response window or feedback window, just present white fixation
     
@@ -11,7 +15,11 @@ function drawFixation(task)
         if stimulus.tmp.response == 1, mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.greencorrect);
         elseif stimulus.tmp.response == 0, mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.redincorrect); end
     
-    elseif (task.thistrial.thisseg == 8 && ~task.thistrial.gotResponse) %If there is no response, present orange fixation
+     elseif (task.thistrial.thisseg == 8 && stimulus.FixationBreak)  %If there is a fixn break, present 
+       mglBltTexture(thisText,[0 0],'left','top');
+    
+    elseif (task.thistrial.thisseg == 8 && ~task.thistrial.gotResponse)  %If there is no response, present orange fixation
         mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.orangenoanswer);
+    
     end
 end

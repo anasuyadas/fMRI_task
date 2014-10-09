@@ -61,7 +61,7 @@ if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
 
-%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the task
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ stimulus.LocationIndices=unique(location);
 
 task{1}.random = 1;
 [task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
-%% 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,6 +116,30 @@ stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
 
 myscreen = eyeCalibDisp(myscreen);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% initialize the fixation task
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% set the first task to be the fixation staircase task
+global fixStimulus;
+if ~easyFixTask
+  % default values
+  fixStimulus.diskSize = 0.5;
+  fixStimulus.fixWidth = 1;
+  fixStimulus.fixLineWidth = 3;
+  fixStimulus.stimTime = 0.4;
+  fixStimulus.responseTime = 1;
+else
+  % make cross bigger and task slower
+  fixStimulus.diskSize = 0.5;
+  fixStimulus.fixWidth = 1+1*easyFixTask;
+  fixStimulus.fixLineWidth = 3+2*easyFixTask;
+  fixStimulus.stimTime = 0.4+0.4*easyFixTask;
+  fixStimulus.responseTime = 1+1*easyFixTask;
+end
+global fixStimulus
+fixStimulus.pos = [xOffset yOffset];
+[task{1} myscreen] = fixStairInitTask(myscreen);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +170,7 @@ global stimulus
 task.thistrial.targetLocation1 = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
 task.thistrial.targetLocation2 = 2;
 
-elseif (task.thistrial.thisseg == 1) % fixation
+ (task.thistrial.thisseg == 1) % fixation
     iti =task.thistrial.iti;%iti = .6;
     task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .64 .03 iti];
     %need to make sure that there are only two locations per run
@@ -164,12 +188,12 @@ elseif (task.thistrial.thisseg == 1) % fixation
     end
     
     
-elseif (task.thistrial.thisseg == 8) % response
+(task.thistrial.thisseg == 8) % response
     stimulus.trialnum = stimulus.trialnum + 1;
     if ~task.thistrial.gotResponse
        %mglPlaySound(stimulus.noanswer);
     end;
-end
+
 
 mglClearScreen(stimulus.grayColor);
 setGammaTable(1);

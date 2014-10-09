@@ -191,20 +191,25 @@ if (task.thistrial.thisseg == 9) % ITI
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
+    stimulus.FixationBreak = 0;
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
     drawPreCue(task.thistrial.targetLocation);
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
     % the contrast value is the threshold itself
     drawGabor(stimulus.contrasts(task.thistrial.contrast),...
               stimulus.tmp.targetLocation,...
@@ -213,10 +218,11 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
-    
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck; end
+    if stimulus.FixationBreak, task = jumpSegment(task,8); end
     drawRespCue(task.thistrial.targetLocation); % has to be a positive integer
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
