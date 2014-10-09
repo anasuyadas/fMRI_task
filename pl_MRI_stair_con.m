@@ -60,6 +60,8 @@ myscreen.background=.5;
 mglVisualAngleCoordinates(57) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
+    myscreen.eyetracker.savedata = true;%%%%% TO ADD FOR ONLINE EYETRACKING
+    myscreen.eyetracker.data = [1 1 1 0];%%%%% TO ADD FOR ONLINE EYETRACKING
 end
 
 %%
@@ -206,19 +208,19 @@ if (task.thistrial.thisseg == 9) % ITI
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
     drawPreCue(task.thistrial.targetLocation);
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
     % the contrast value is the threshold itself
     drawGabor(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
@@ -226,11 +228,11 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
     
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck; end
+    if stimulus.EyeTrack, fixCheck(myscreen,task); end
     drawRespCue(task.thistrial.targetLocation); % has to be a positive integer
 
 elseif (task.thistrial.thisseg == 7) % Resp Window

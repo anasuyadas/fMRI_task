@@ -85,7 +85,7 @@ n_repeats = 1;%  trials per block n= 36; 3contrast*3ITIs*2location
 %length approximately ~5minutes
 
 if diagonal == 1  
-    [contrast,ori,location,trialNum] = ndgrid(1:7,1:2,[1,3],1:n_repeats);
+    [contrast,ori,location,trialNum] = ndgrid(1:7,12,[1,3],1:n_repeats);
 else 
     [contrast,ori,location,trialNum] = ndgrid(1:7,1:2,[2,4],1:n_repeats);
 end
@@ -107,7 +107,7 @@ task{1}.randVars.targetOrientation = ori(random_order);
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
-stimulus.FixationBreak=zeros(1,length(location(:)));
+stimulus.FixationBreak=an(1,length(location(:)));
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;

@@ -442,11 +442,9 @@ task.lasttrial = task.thistrial;
 
 
 if stimulus.FixationBreak(task.trialnum)
-    if task.numTrials == task.origNumTrials
-        n = 1;
-    else
-        n = length(task.fixBreakTrial)+1;
-    end
+    if length(task.fixBreakTrial) > 1 & stimulus.FixationBreak(task.trialnum)
+    n = length(task.fixBreakTrial)+1;
+    else n = 1; end
     task.fixBreakTrial{n} = task.thistrial;
     task.numTrials = task.numTrials + 1; 
 end

@@ -92,6 +92,7 @@ contrast(3,:,[1:2],2)=2;
 
 
 task{1}.numTrials = length(location(:)); % n*n_repeats
+task{1}.origNumTrials = length(location(:)); % n*n_repeats
 random_order = randperm(task{1}.numTrials);
  
 task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
