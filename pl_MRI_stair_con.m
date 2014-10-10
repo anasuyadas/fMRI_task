@@ -10,19 +10,21 @@ global stimulus;
 global MGL;
 
 
-% check arguments
-% if ~any(nargin == 3)
-%     help transientAttention
-%     return
-% % end
-% 
+check arguments
+if ~any(nargin == 3)
+    help transientAttention
+    return
+end
+
 eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
-if ieNotDefined('indContrast'),indContrast = .8;end % initialize some default contrast vals
+if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
 if ieNotDefined('cueType'),cueType = 0;end
+
+%contLevels = makeContLevels(indContrast); %  min = 1.5% , max = 80%
 
 thisdir = pwd;
 % make a data directory if necessary
@@ -77,36 +79,41 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 15;%  trials per block n= 36; 3contrast*3ITIs*2location 
-% Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
-%n_repeats will have to be adjusted depending on our TR to keep block
-%length approximately ~5minutes
+n_repeats = 15; %num trials = num(conts*oris*locs*repeats)
 
 if diagonal == 1  
     [contrast,ori,location,trialNum] = ndgrid(1,1:2,[1,3],1:n_repeats);
 else 
     [contrast,ori,location,trialNum] = ndgrid(1,1:2,[2,4],1:n_repeats);
+
 end
-%contrast =3 is blank trials. We wants on ~10% of total trials to be blank
-%trials. Re-assign 4 out of 6 blank trials to be non-blank stim containing
-%trials
-% contrast(3,:,[1:2],1)=1;
-% contrast(3,:,[1:2],2)=2; 
+
 
 
 task{1}.numTrials = length(location(:)); % n*n_repeats
 task{1}.origNumTrials = length(location(:)); % n*n_repeats
 random_order = randperm(task{1}.numTrials);
  
-task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
+stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
+stimulus.randVars.contrast = contrast(random_order);
+stimulus.randVars.targetOrientation = ori(random_order);
+
+
 task{1}.randVars.len_ = task{1}.numTrials;
-task{1}.randVars.contrast = contrast(random_order);
-task{1}.randVars.targetOrientation = ori(random_order);
+task{1}.randVars.trialIndex = random_order;
+
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
+stimulus.FixationBreakCurrent = 0;
 stimulus.LocationIndices=unique(location);
+
+stimulus.indTilt=indTilt;
+stimulus.preCue.type = cueType;
+
+task{1}.random = 1;
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STAIRCASE
@@ -125,28 +132,24 @@ stair.halfRule = 'levitt';
 stimulus.stair = upDownStaircase(stair.upRule,stair.downRule,stair.startThresh,[stair.stepSize, stair.minStepSize],stair.halfRule);
 stimulus.stair.minThreshold = .5; stimulus.stair.maxThreshold = 50;
 
-
-task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-myscreen = initStimulus('stimulus',myscreen);%initStimulus('stimulus',myscreen,indContrast,diagonal);
+myscreen = initStimulus('stimulus',myscreen);
 stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
 
-myscreen = eyeCalibDisp(myscreen);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 phaseNum = 1;
+
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
-    [task,myscreen,phaseNum] = updateTask(task,myscreen,phaseNum);
-    
+    [task,myscreen,phaseNum] = updateTaskHack(task,myscreen,phaseNum);
     % flip screen
     myscreen = tickScreen(myscreen,task);
 end
@@ -171,12 +174,12 @@ elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
     task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
-    stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{task.thistrial.targetLocation}];
+    stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];
     
     stimulus.FixationStarted=0;
     %response cue
-    stimulus.tmp.respcueLocation=stimulus.respcueLocation{task.thistrial.targetLocation}; %if polygon
-    stimulus.tmp.respcueLocation=task.thistrial.targetLocation; %if central x
+    stimulus.tmp.respcueLocation=stimulus.respcueLocation{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}; %if polygon
+    stimulus.tmp.respcueLocation=stimulus.randVars.targetLocation(task.thistrial.trialIndex); %if central x
     %stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
     
     %just neutral cues - no exo cues
@@ -197,22 +200,30 @@ setGammaTable(1);
 end
 
 
+
+
 %%
 function [task, myscreen] = DrawStimulusCallback(task, myscreen)
 global stimulus;
 
 mglClearScreen(stimulus.grayColor);%###
-
+stimulus.trialend = task.numTrials;
 if (task.thistrial.thisseg == 9) % ITI
     drawFixation(task);
-    
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
+    stimulus.FixationBreak(task.trialnum) = 0;
+    stimulus.FixationBreakCurrent = 0;
+    
     drawFixation(task);
+    %disp(sprintf('total num of trials so far %f',task.trialnum))
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
+    
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    drawPreCue(task.thistrial.targetLocation);
+    if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
+    drawPreCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex));
+    end
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
@@ -222,27 +233,32 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
     % the contrast value is the threshold itself
+    if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
+    
     drawGabor(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
-              ((stimulus.rotation(task.thistrial.targetOrientation)*stimulus.indTilt)),1);
+              ((stimulus.rotation(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))*stimulus.indTilt)),1,...
+              task.thistrial.trialIndex);
+
+    end
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    drawRespCue(task.thistrial.targetLocation); % has to be a positive integer
+    if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
+        drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
+    end
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 8) % Feedback
     drawFixation(task);
-
-end
     
+end
 
 end
 
@@ -256,14 +272,12 @@ mglClearScreen(stimulus.grayColor); %###
 if ~task.thistrial.gotResponse
     
     % check response correct or not
-    if task.thistrial.contrast ==  3 %cue-only
-        stimulus.tmp.response = task.thistrial.whichButton == 3; %press 3 to have the same motor response as in the main conditions
-    else
-        stimulus.tmp.response = task.thistrial.whichButton == (task.thistrial.targetOrientation); %1 for left and 2 for right
-    end;
+stimulus.tmp.response = task.thistrial.whichButton == (stimulus.randVars.targetOrientation(task.thistrial.trialIndex)); %1 for left and 2 for right
     
 end
-stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
+if ~stimulus.FixationBreakCurrent || ~stimulus.EyeTrack
+    stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
+end
 disp(sprintf('threshold for this trial is %s',stimulus.stair.threshold));
 end
 

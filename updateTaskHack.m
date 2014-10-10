@@ -10,7 +10,7 @@
 %    purpose: runs experimental tasks
 %
 function [task, myscreen, tnum] = updateTaskHack(task,myscreen,tnum)
-
+global stimulus
 % make sure we have a valid active task
 if tnum > length(task)
   return
@@ -19,6 +19,23 @@ end
 % set the random state
 randstate = rand(myscreen.randstate.type);
 rand(task{tnum}.randstate.type,task{tnum}.randstate.state);
+
+
+
+if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent
+            if task{1}.numTrials == task{1}.origNumTrials
+                n = 1;
+            else
+                n = length(task{1}.fixBreakTrial)+1;
+            end
+            task{1}.fixBreakTrial{n} = task{1}.thistrial;
+            task{1}.numTrials = task{1}.numTrials + 1;
+            task{1}.randVars.len_ = task{1}.numTrials;
+            task{1}.randVars.trialIndex(task{1}.numTrials) = task{1}.randVars.trialIndex(task{1}.trialnum);
+            stimulus.trialend = stimulus.trialend+1;
+            stimulus.updateCurrent = 1;
+end
+
 
 % if we have finished how many trials were called for go to next task
 if (task{tnum}.trialnum > task{tnum}.numTrials)
@@ -434,27 +451,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % init trial
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [task, myscreen] = initTrial(task,myscreen,phase)
+function [task, myscreen] = initTrial(task,myscreen,phase) 
 
-global stimulus 
 % keep lasttrial information
 task.lasttrial = task.thistrial;
 
-
-if stimulus.FixationBreak(task.trialnum)
-    if task.numTrials == task.origNumTrials
-        n = 1;
-    else
-        n = length(task.fixBreakTrial)+1;
-    end
-    task.fixBreakTrial{n} = task.thistrial;
-    task.numTrials = task.numTrials + 1;
-    task.randVars.len_ = task.numTrials;
-    task.randVars.trialIndex(task.numTrials) = task.randVars.trialIndex(task.trialnum); 
-end
-
 %only update randvars if this is a new trial and not a trial that is been
-if task.trialnum <= task.origNumTrials
+% if task.trialnum <= task.origNumTrials
     % get randomization parameters
     for i = 1:task.randVars.n_
         % get the variable name we are working on
@@ -467,9 +470,9 @@ if task.trialnum <= task.origNumTrials
             task.thistrial.(thisRandVarName) = task.randVars.(thisRandVarName)(mod(task.trialnum-1,task.randVars.varlen_(i))+1);
         end
     end
-else
-    task.thistrial = task.fixBreakTrial(stimulus.trialnum-task.origNumTrials)
-end
+% else
+%     task.thistrial = task.fixBreakTrial(stimulus.trialnum-task.origNumTrials);
+% end
 
 % recreate all other trialvars regardless of whether this is a new or a
 % reused trial
