@@ -449,7 +449,7 @@ if stimulus.FixationBreak(task.trialnum)
     end
     task.fixBreakTrial{n} = task.thistrial;
     task.numTrials = task.numTrials + 1;
-    task.randVars.len_ = task{1}.numTrials;
+    task.randVars.len_ = task.numTrials;
     task.randVars.trialIndex(task.numTrials) = task.randVars.trialIndex(task.trialnum); 
 end
 

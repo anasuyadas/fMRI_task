@@ -108,10 +108,11 @@ task{1}.randVars.len_ = task{1}.numTrials;
 % task{1}.randVars.targetOrientation = ori(random_order);
 
 stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
-stimulus.randVars.len_ = task{1}.numTrials;
 stimulus.randVars.contrast = contrast(random_order);
 stimulus.randVars.targetOrientation = ori(random_order);
 
+
+task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
 
 
@@ -215,9 +216,10 @@ mglClearScreen(stimulus.grayColor);%###
 
 if (task.thistrial.thisseg == 9) % ITI
     drawFixation(task);
-    
+    changeTrialEnd = 0;
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
     stimulus.FixationBreak(task.trialnum) = 0;
+    changeTrialEnd = 0;
     drawFixation(task);
     %disp(sprintf('total num of trials so far %f',task.trialnum))
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
@@ -225,8 +227,6 @@ elseif (task.thistrial.thisseg == 1) % Initial Fixation
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-%     if stimulus.FixationBreak(task.trialnum),
-%     task.thistrial.thisseg=8; end
     if ~stimulus.FixationBreak(task.trialnum) || ~stimulus.EyeTrack
     drawPreCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex));
     end
@@ -234,13 +234,11 @@ elseif (task.thistrial.thisseg == 2) % Pre Cue
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-%     if stimulus.FixationBreak(task.trialnum),
-%     task.thistrial.thisseg=8; end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    if stimulus.FixationBreak(task.trialnum), task.thistrial.thisseg=8; end 
+%     end 
     % the contrast value is the threshold itself
     if ~stimulus.FixationBreak(task.trialnum) || ~stimulus.EyeTrack
     drawGabor(stimulus.contrasts(stimulus.randVars.contrast(task.thistrial.trialIndex)),...
@@ -252,13 +250,11 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    if stimulus.FixationBreak(task.trialnum), task.thistrial.thisseg=8; end 
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
     if stimulus.EyeTrack, fixCheck(myscreen,task); end
-    if stimulus.FixationBreak(task.trialnum), task.thistrial.thisseg=8; end
     if ~stimulus.FixationBreak(task.trialnum) || ~stimulus.EyeTrack
-    drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
+        drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
     end
 
 elseif (task.thistrial.thisseg == 7) % Resp Window
@@ -269,6 +265,10 @@ elseif (task.thistrial.thisseg == 8) % Feedback
     
 end
 
+if stimulus.FixationBreak(task.trialnum) && ~changeTrialEnd
+       stimulus.trialend = stimulus.trialend+1;
+       changeTrialEnd = 1; 
+end
 
 end
 

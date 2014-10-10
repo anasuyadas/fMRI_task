@@ -68,7 +68,7 @@ stimulus.init = 1;
 
 stimulus.sf = 4;                % in cpd
 stimulus.orientation = 0;       % in deg
-stimulus.phase = 180.*rand(task{1}.numTrials); % in deg
+stimulus.phase = 180.*rand(1,task{1}.numTrials); % in deg
 stimulus.eccentricity = 4.6;    % in deg
 
 stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind(45)];[-cosd(45), -sind(45)]};
