@@ -1,4 +1,4 @@
-function drawGabor(desiredContrast,position,orientation,sf)
+function drawGabor(desiredContrast,position,orientation,sf,trialIndex)
 % drawGaborPedCdeltaC
 %
 %        $Id: drawGabor.m, v 1 2007/01/18 19:40:56 ?? ?? $
@@ -16,7 +16,7 @@ if round(stimulus.nDisplayContrasts*desiredContrast/stimulus.currentMaxContrast)
     keyboard
 end
 
-mglBltTexture(stimulus.tex{sf}(displayContrastNum+1),position,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
+mglBltTexture(stimulus.tex{sf,trialIndex}(displayContrastNum+1),position,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
 
 % disp(sprintf('orientation for this trial is %f',desiredContrast));
 end

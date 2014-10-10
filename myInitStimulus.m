@@ -68,7 +68,7 @@ stimulus.init = 1;
 
 stimulus.sf = 4;                % in cpd
 stimulus.orientation = 0;       % in deg
-stimulus.phase = 0;             % in deg
+stimulus.phase = 180.*rand(task{1}.numTrials); % in deg
 stimulus.eccentricity = 4.6;    % in deg
 
 stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind(45)];[-cosd(45), -sind(45)]};
@@ -84,7 +84,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 gratingMatrix = cell(1,length(stimulus.sf));
 for thisSF = 1:length(stimulus.sf)      %only one spatial frequency
-    gratingMatrix{thisSF} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),90,stimulus.phase); %orienation set to 0 => rotated in drawGabor
+    for thisPhase = 1:length(stimulus.phase)
+        gratingMatrix{thisSF,thisPhase} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),90,stimulus.phase(task{1}.randVars.trialIndex(thisPhase)));
+    end  %orienation set to 90 => rotated in drawGabor
 end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
@@ -95,7 +97,7 @@ grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 
 disppercent(-inf,'Calculating gabors');
-for thisSF = 1:length(stimulus.sf)
+for thisSF = 1:(length(stimulus.sf)*length(stimulus.phase))
     for thisContrast = 0:stimulus.deltaGratingColors
         % stimulus.texture
         grating(:,:,1) = stimulus.midGratingColors+gratingMatrix{thisSF}*thisContrast;

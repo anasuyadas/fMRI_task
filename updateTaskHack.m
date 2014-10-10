@@ -448,7 +448,9 @@ if stimulus.FixationBreak(task.trialnum)
         n = length(task.fixBreakTrial)+1;
     end
     task.fixBreakTrial{n} = task.thistrial;
-    task.numTrials = task.numTrials + 1; 
+    task.numTrials = task.numTrials + 1;
+    task.randVars.len_ = task{1}.numTrials;
+    task.randVars.trialIndex(task.numTrials) = task.randVars.trialIndex(task.trialnum); 
 end
 
 %only update randvars if this is a new trial and not a trial that is been
