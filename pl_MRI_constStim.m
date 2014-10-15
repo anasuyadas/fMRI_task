@@ -59,7 +59,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-mglVisualAngleCoordinates(57) %distance from screen
+mglVisualAngleCoordinates(156.5,[36.5,26.5]) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
     myscreen.eyetracker.savedata = true;%%%%% TO ADD FOR ONLINE EYETRACKING
@@ -79,7 +79,7 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 1;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 2;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
@@ -102,10 +102,6 @@ task{1}.numTrials = length(location(:)); % n*n_repeats
 task{1}.origNumTrials = length(location(:)); % n*n_repeats
 random_order = randperm(task{1}.numTrials);
  
-% task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
-% task{1}.randVars.len_ = task{1}.numTrials;
-% task{1}.randVars.contrast = contrast(random_order);
-% task{1}.randVars.targetOrientation = ori(random_order);
 
 stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
 stimulus.randVars.contrast = contrast(random_order);
@@ -117,28 +113,21 @@ task{1}.randVars.trialIndex = random_order;
 
 
 
-% 
-% for i = 1:length(location(:));
-%     task{1}.randVars.cell{i}.targetLocation = task{1}.randVars.targetLocation(i);
-%     task{1}.randVars.cell{i}.len_ = task{1}.randVars.len_(i);
-%     task{1}.randVars.cell{i}.contrast = task{1}.randVars.contrast(i);
-%     task{1}.randVars.cell{i}.targetOrientation = task{1}.randVars.targetOrientation(i);
-%     task{1}.randVars.cell{i}.phase = task{1}.randVars.phase(i);
-% end
-
-
-
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.FixationBreakCurrent = 0;
+stimulus.FixationBreakRecent= 0;
+stimulus.trialAttemptNum = 0;
+stimulus.numFixBreak = 0;
+stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@recalibrateCallback);
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize the stimulus
@@ -317,4 +306,36 @@ cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))
 
 
 contLevels = [minCont,cont2,cont3,threshCont,cont5,cont6,maxCont];
+end
+
+%% recalibrateCallback
+function [task, myscreen] = recalibrateCallback(task,myscreen)
+global stimulus
+
+stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+
+if stimulus.FixationBreakCurrent
+    
+    stimulus.numFixBreak = stimulus.numFixBreak+1;
+    stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
+    
+    if  stimulus.numFixBreak < 2
+        stimulus.FixationBreakRecent = 0;
+    elseif (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+        
+        if stimulus.FixationBreakRecent < 3
+            
+            stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
+            
+        else stimulus.FixationBreakRecent
+            
+            stimulus.FixationBreakRecent = 0;
+            myscreen = eyeCalibDisp(myscreen,'Press SPACEBAR, then C to calibrate');
+            
+        end
+    else
+        stimulus.FixationBreakRecent = 0;
+    end
+end
+
 end

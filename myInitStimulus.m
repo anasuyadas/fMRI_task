@@ -40,7 +40,7 @@ stimulus.black = [0 0 0];
 stimulus.white = [1/255 1/255 1/255];
 stimulus.green = [0 160 0];
 stimulus.blue = [0 0 160];
-stimulus.greencorrect = [0 255 0];
+stimulus.greencorrect = [0 200 20];
 stimulus.redincorrect = [255 0 0];
 stimulus.orangenoanswer = [255 215 0];
 stimulus.grey = [.025 .025 .025];
@@ -104,8 +104,9 @@ for thisSF = 1:(length(stimulus.sf)*length(stimulus.phase))
         grating(:,:,2) = grating(:,:,1);
         grating(:,:,3) = grating(:,:,1);
         stimulus.tex{thisSF}(thisContrast+1) = mglCreateTexture(grating);
-        disppercent(thisContrast/stimulus.deltaGratingColors);
+%         disppercent(thisContrast/stimulus.deltaGratingColors);
     end
+    disppercent(thisSF/stimulus.deltaGratingColors);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

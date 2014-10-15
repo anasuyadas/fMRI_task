@@ -100,14 +100,17 @@ task{1}.randVars.trialIndex = random_order;
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
-stimulus.FixationBreakCurrent = 0;
+stimulus.FixationBreakRecent= 0;
+stimulus.trialAttemptNum = 0;
+stimulus.numFixBreak = 0;
+stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@recalibrateCallback);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STAIRCASE
@@ -288,4 +291,34 @@ function drawRespCue(loc)
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
               stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
     
+end
+
+%% recalibrateCallback
+function [task, myscreen] = recalibrateCallback(task,myscreen)
+global stimulus
+
+stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+
+if stimulus.FixationBreakCurrent
+    
+    stimulus.numFixBreak = stimulus.numFixBreak+1;
+    stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
+    
+    if  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+        
+        if stimulus.FixationBreakRecent < 3
+            
+            stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
+            
+        elseif stimulus.FixationBreakRecent
+            stimulus.FixationBreakRecent = 0;
+            myscreen = eyeCalibDisp(myscreen);
+        end
+    else
+        
+        stimulus.FixationBreakRecent = 0;
+        
+    end
+end
+
 end

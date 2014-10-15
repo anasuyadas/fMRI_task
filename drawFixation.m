@@ -2,7 +2,7 @@
 function drawFixation(task)
     global stimulus
     
-     mglTextSet('Arial',24,[0 0 0],0,0,0,1,0,0,0);
+    mglTextSet('Arial',24,[1 1 1],0,0,0,1,0,0,0);
     thisText = mglText('please fixate');
     
     if stimulus.FixationBreakCurrent %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
