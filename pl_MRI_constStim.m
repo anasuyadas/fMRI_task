@@ -1,9 +1,8 @@
 function myscreen = pl_MRI_constStim(observer,varargin)
 
 %%% Pilot with only valid and invalid conditions
-% The raised cosine reqires matlabPyrTools
-% http://www.cns.nyu.edu/~lcv/software.php
-% psuedorandomize across all combination of stims+ITI
+%
+% https://github.com/anasuyadas/fMRI_task.git
 
 
 global stimulus;
@@ -330,7 +329,7 @@ if stimulus.FixationBreakCurrent
         else stimulus.FixationBreakRecent
             
             stimulus.FixationBreakRecent = 0;
-            myscreen = eyeCalibDisp(myscreen,'Press SPACEBAR, then C to calibrate');
+            myscreen = eyeCalibDisp(myscreen);
             
         end
     else

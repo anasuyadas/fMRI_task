@@ -102,10 +102,6 @@ task{1}.numTrials = length(location(:)); % n*n_repeats
 task{1}.origNumTrials = length(location(:)); % n*n_repeats
 random_order = randperm(task{1}.numTrials);
  
-% task{1}.randVars.targetLocation = location(random_order); %one of the 2 positions
-% task{1}.randVars.len_ = task{1}.numTrials;
-% task{1}.randVars.contrast = contrast(random_order);
-% task{1}.randVars.targetOrientation = ori(random_order);
 
 stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
 stimulus.randVars.contrast = contrast(random_order);
@@ -114,17 +110,6 @@ stimulus.randVars.targetOrientation = ori(random_order);
 
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
-
-
-
-% 
-% for i = 1:length(location(:));
-%     task{1}.randVars.cell{i}.targetLocation = task{1}.randVars.targetLocation(i);
-%     task{1}.randVars.cell{i}.len_ = task{1}.randVars.len_(i);
-%     task{1}.randVars.cell{i}.contrast = task{1}.randVars.contrast(i);
-%     task{1}.randVars.cell{i}.targetOrientation = task{1}.randVars.targetOrientation(i);
-%     task{1}.randVars.cell{i}.phase = task{1}.randVars.phase(i);
-% end
 
 
 
@@ -342,14 +327,14 @@ if stimulus.FixationBreakCurrent
             
             stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
             
-        else
+        else stimulus.FixationBreakRecent
+            
             stimulus.FixationBreakRecent = 0;
-            myscreen = eyeCalibDisp(myscreen,'Press SPACEBAR, then C to calibrate');
+            myscreen = eyeCalibDisp(myscreen);
+            
         end
     else
-        
         stimulus.FixationBreakRecent = 0;
-        
     end
 end
 
