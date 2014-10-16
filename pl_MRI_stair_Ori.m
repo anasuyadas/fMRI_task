@@ -53,7 +53,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-mglVisualAngleCoordinates(57) %distance from screen
+mglVisualAngleCoordinates(myscreen.displayDistance,myscreen.displaySize)
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
     myscreen.eyetracker.savedata = true;%%%%% TO ADD FOR ONLINE EYETRACKING

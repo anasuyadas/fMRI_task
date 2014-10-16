@@ -8,6 +8,7 @@ function myscreen = pl_MRI_constStim(observer,varargin)
 global stimulus;
 global MGL;
 
+mglOpen
 
 % check arguments
 % if ~any(nargin == 3)
@@ -58,7 +59,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-mglVisualAngleCoordinates(156.5,[36.5,26.5]) %distance from screen
+mglVisualAngleCoordinates(myscreen.displayDistance,myscreen.displaySize) %distance from screen
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
     myscreen.eyetracker.savedata = true;%%%%% TO ADD FOR ONLINE EYETRACKING
@@ -71,8 +72,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 0;
-task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
-task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  
+task{1}.segmin =     [0.1 .06 .04 20 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.1 .06 .04 20 .3 .3 .8 .03 2];  
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
@@ -166,7 +167,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
+    task.thistrial.seglen =[0.1 .06 .04 20 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];%[stimulus.locations{task.thistrial.targetLocation}];
     
