@@ -21,6 +21,11 @@ function fixCheck(myscreen,task)
             stimulus.FixationBreakCurrent = 1;
             stimulus.updateCurrent = 0;
             
+            if task.numTrials == task.origNumTrials
+                stimulus.fixBreakTRACKindex(1) = task.thistrial.trialIndex;
+            else
+                stimulus.fixBreakTRACKindex(1,length(stimulus.fixBreakTRACKindex)+1) = task.thistrial.trialIndex;
+            end
             
             
         end

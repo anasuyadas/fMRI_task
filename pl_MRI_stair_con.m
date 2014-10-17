@@ -108,10 +108,13 @@ stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.FixationBreakRecent= 0;
 stimulus.FixationBreakCurrent = 0;
-stimulus.trialAttemptNum = 1;
+stimulus.trialAttemptNum = 0;
 stimulus.numFixBreak = 0;
 stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
+stimulus.upDated = 1;
+stimulus.fixBreakTRACKindex = 0;
+stimulus.testFix1 = 0;
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
@@ -213,29 +216,37 @@ global stimulus;
 mglClearScreen(stimulus.grayColor);%###
 stimulus.trialend = task.numTrials;
 if (task.thistrial.thisseg == 9) % ITI
+    stimulus.testFix1 = 0;
     drawFixation(task);
+    
+    
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
-    stimulus.FixationBreak(task.trialnum) = 0;
-    stimulus.FixationBreakCurrent = 0;
+    
     
     drawFixation(task);
+    if ~stimulus.testFix1
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
+        stimulus.testFix1  = 1;
+    end
     %disp(sprintf('total num of trials so far %f',task.trialnum))
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
     
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     drawPreCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex));
     end
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     % the contrast value is the threshold itself
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     
@@ -248,10 +259,10 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
         drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
     end
@@ -306,7 +317,7 @@ end
 function [task, myscreen] = recalibrateCallback(task,myscreen)
 global stimulus
 
-
+stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 
 if stimulus.FixationBreakCurrent
     
@@ -329,7 +340,6 @@ if stimulus.FixationBreakCurrent
         
     end
 end
-stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 end
 
 %% makeStimCallback

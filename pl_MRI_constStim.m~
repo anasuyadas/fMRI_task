@@ -72,14 +72,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 0;
-task{1}.segmin =     [0.1 .06 .04 20 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
-task{1}.segmax =     [0.1 .06 .04 20 .3 .3 .8 .03 2];  
+task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
 
 
-n_repeats = 2;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 1;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
@@ -122,6 +122,9 @@ stimulus.trialAttemptNum = 0;
 stimulus.numFixBreak = 0;
 stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
+stimulus.upDated = 1;
+stimulus.fixBreakTRACKindex = 0;
+stimulus.testFix1 = 0;
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
@@ -144,6 +147,7 @@ phaseNum = 1;
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
+    
     [task,myscreen,phaseNum] = updateTaskHack(task,myscreen,phaseNum);
     % flip screen
     myscreen = tickScreen(myscreen,task);
@@ -167,7 +171,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 20 .3 .3 .8 .03 iti];
+    task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];%[stimulus.locations{task.thistrial.targetLocation}];
     
@@ -203,28 +207,34 @@ mglClearScreen(stimulus.grayColor);%###
 stimulus.trialend = task.numTrials;
 if (task.thistrial.thisseg == 9) % ITI
     drawFixation(task);
+    
+    stimulus.testFix1 = 0;
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
-    stimulus.FixationBreak(task.trialnum) = 0;
-    stimulus.FixationBreakCurrent = 0;
     
     drawFixation(task);
     %disp(sprintf('total num of trials so far %f',task.trialnum))
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if ~stimulus.testFix1 
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.testFix1  = 1;
+    end
+    
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
     
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     drawPreCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex));
     end
     
 elseif (task.thistrial.thisseg == 3) % ISI 1
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     
 elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     % the contrast value is the threshold itself
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     drawGabor(stimulus.contrasts(stimulus.randVars.contrast(task.thistrial.trialIndex)),...
@@ -235,10 +245,10 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     
 elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
 elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
-    if stimulus.EyeTrack, fixCheck(myscreen,task); end
+    if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
         drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
     end
@@ -316,6 +326,7 @@ stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 
 if stimulus.FixationBreakCurrent
     
+
     stimulus.numFixBreak = stimulus.numFixBreak+1;
     stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
     

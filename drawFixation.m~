@@ -2,10 +2,10 @@
 function drawFixation(task)
     global stimulus
     
-     mglTextSet('Arial',24,[0 0 0],0,0,0,1,0,0,0);
+    mglTextSet('Arial',24,[1 1 1],0,0,0,1,0,0,0);
     thisText = mglText('please fixate');
     
-    if stimulus.FixationBreakCurrent %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
+    if stimulus.FixationBreakCurrent && || ~stimulus.testFix1  %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
        mglBltTexture(thisText,[0 0],'left','top');
     
     elseif ~task.thistrial.gotResponse

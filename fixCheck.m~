@@ -18,9 +18,14 @@ function fixCheck(myscreen,task)
 %     else
         if (sqrt(ep(end,1)^2+ep(end,2)^2))>stimulus.TrialStartFixDist && ~stimulus.FixationBreakCurrent
             stimulus.FixationBreak(task.trialnum)=1;
-121            stimulus.FixationBreakCurrent = 1;
+            stimulus.FixationBreakCurrent = 1;
             stimulus.updateCurrent = 0;
             
+            if task.numTrials == task.origNumTrials
+                stimulus.fixBreakTRACKindex(1) = task.thistrial.trialIndex;
+            else
+                stimulus.fixBreakTRACKindex(1,length(stimulus.fixBreakTRACKindex)+1) = task.thistrial.trialIndex;
+            end
             
             
         end

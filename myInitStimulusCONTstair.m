@@ -97,7 +97,7 @@ gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,sti
 grating(:,:,1) = stimulus.midGratingColors+gratingMatrix*(127*stimulus.stair.threshold);
 grating(:,:,2) = grating(:,:,1);
 grating(:,:,3) = grating(:,:,1);
-stimulus.tex{stimulus.trialAttemptNum} = mglCreateTexture(grating);
+stimulus.tex{1} = mglCreateTexture(grating);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fixation

@@ -22,7 +22,7 @@ rand(task{tnum}.randstate.type,task{tnum}.randstate.state);
 
 
 
-if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent
+if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent && ~stimulus.upDated
             if task{1}.numTrials == task{1}.origNumTrials
                 n = 1;
             else
@@ -33,7 +33,10 @@ if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent
             task{1}.randVars.len_ = task{1}.numTrials;
             task{1}.randVars.trialIndex(task{1}.numTrials) = task{1}.randVars.trialIndex(task{1}.trialnum);
             stimulus.trialend = stimulus.trialend+1;
-            stimulus.updateCurrent = 1;
+            stimulus.updateCurrent = 1; 
+            stimulus.upDated = 1;
+else
+    stimulus.upDated = 0;
 end
 
 
