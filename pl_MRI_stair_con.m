@@ -10,11 +10,11 @@ global stimulus;
 global MGL;
 
 
-check arguments
-if ~any(nargin == 3)
-    help transientAttention
-    return
-end
+% check arguments
+% if ~any(nargin == 3)
+%     help transientAttention
+%     return
+% end
 
 eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
@@ -107,7 +107,8 @@ stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
 stimulus.FixationBreakRecent= 0;
-stimulus.trialAttemptNum = 0;
+stimulus.FixationBreakCurrent = 0;
+stimulus.trialAttemptNum = 1;
 stimulus.numFixBreak = 0;
 stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
@@ -116,7 +117,7 @@ stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@recalibrateCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@recalibrateCallback,@makeStimCallback);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STAIRCASE
@@ -127,13 +128,13 @@ stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
 stair.upRule = 1;
 stair.downRule = 2;
-stair.startThresh = 40;
-stair.stepSize = 10;
-stair.minStepSize = .1;
+stair.startThresh = .4;
+stair.stepSize = .1;
+stair.minStepSize = .001;
 stair.halfRule = 'levitt';
 
 stimulus.stair = upDownStaircase(stair.upRule,stair.downRule,stair.startThresh,[stair.stepSize, stair.minStepSize],stair.halfRule);
-stimulus.stair.minThreshold = .5; stimulus.stair.maxThreshold = 50;
+stimulus.stair.minThreshold = .005; stimulus.stair.maxThreshold = .75;
 
 %% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +142,7 @@ stimulus.stair.minThreshold = .5; stimulus.stair.maxThreshold = 50;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 myscreen = initStimulus('stimulus',myscreen);
-stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
+stimulus = myInitStimulusCONTstair(stimulus,myscreen,task,indContrast);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,7 +239,7 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     % the contrast value is the threshold itself
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     
-    drawGabor(stimulus.stair.threshold/100,...
+    drawGaborCONTstair(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
               ((stimulus.rotation(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))*stimulus.indTilt)),1,...
               task.thistrial.trialIndex);
@@ -305,7 +306,7 @@ end
 function [task, myscreen] = recalibrateCallback(task,myscreen)
 global stimulus
 
-stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+
 
 if stimulus.FixationBreakCurrent
     
@@ -328,5 +329,29 @@ if stimulus.FixationBreakCurrent
         
     end
 end
+stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+end
 
+%% makeStimCallback
+function [task,myscreen] = makeStimCallback(task,myscreen)
+global stimulus
+
+gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,stimulus.phase(task.thistrial.trialIndex));
+
+
+ res = mkR([size(gratingMatrix,1) size(gratingMatrix,2)]);
+ 
+ [Xtbl,Ytbl] = rcosFn(size(gratingMatrix,1),(stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+ grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
+ 
+ 
+
+% stimulus.texture
+grating(:,:,1) = stimulus.midGratingColors+gratingMatrix*(127*stimulus.stair.threshold);
+grating(:,:,2) = grating(:,:,1);
+grating(:,:,3) = grating(:,:,1);
+stimulus.tex{stimulus.trialAttemptNum+1} = mglCreateTexture(grating);
+         
+         
+         
 end

@@ -1,4 +1,4 @@
-function stimulus = myInitStimulus(stimulus,myscreen,task,contrast)
+function stimulus = myInitStimulusCONTstair(stimulus,myscreen,task,contrast)
 global MGL;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function to init the stimulus
@@ -82,32 +82,22 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % make stim texture
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-gratingMatrix = cell(1,length(stimulus.sf));
-for thisSF = 1:length(stimulus.sf)      %only one spatial frequency
-    for thisPhase = 1:length(stimulus.phase)
-        gratingMatrix{thisSF,thisPhase} = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf(thisSF),90,stimulus.phase(task{1}.randVars.trialIndex(thisPhase)));
-    end  %orienation set to 90 => rotated in drawGabor
-end
-
-res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
-
-[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1),(stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
-grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
+%ONLY for first trial
+gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,stimulus.phase(1));
 
 
+ res = mkR([size(gratingMatrix,1) size(gratingMatrix,2)]);
+ 
+ [Xtbl,Ytbl] = rcosFn(size(gratingMatrix,1),(stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+ grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
+ 
+ 
 
-
-disppercent(-inf,'Calculating gabors');
-for thisSF = 1:(length(stimulus.sf)*length(stimulus.phase))
-        % stimulus.texture
-        grating(:,:,1) = stimulus.midGratingColors+gratingMatrix{thisSF}*(127*stimulus.contrasts(stimulus.randVars.contrast(thisSF)));
-        grating(:,:,2) = grating(:,:,1);
-
-        grating(:,:,3) = grating(:,:,1);
-        stimulus.tex{thisSF} = mglCreateTexture(grating);
-%         disppercent(thisContrast/stimulus.deltaGratingColors);
-    disppercent(thisSF/stimulus.deltaGratingColors);
-end
+% stimulus.texture
+grating(:,:,1) = stimulus.midGratingColors+gratingMatrix*(127*stimulus.stair.threshold);
+grating(:,:,2) = grating(:,:,1);
+grating(:,:,3) = grating(:,:,1);
+stimulus.tex{stimulus.trialAttemptNum} = mglCreateTexture(grating);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fixation

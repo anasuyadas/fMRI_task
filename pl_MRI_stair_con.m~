@@ -10,11 +10,11 @@ global stimulus;
 global MGL;
 
 
-check arguments
-if ~any(nargin == 3)
-    help transientAttention
-    return
-end
+% check arguments
+% if ~any(nargin == 3)
+%     help transientAttention
+%     return
+% end
 
 eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
 
@@ -59,7 +59,7 @@ myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
-mglVisualAngleCoordinates(57) %distance from screen
+mglVisualAngleCoordinates(myscreen.displayDistance,myscreen.displaySize)
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
     myscreen.eyetracker.savedata = true;%%%%% TO ADD FOR ONLINE EYETRACKING
@@ -106,14 +106,18 @@ task{1}.randVars.trialIndex = random_order;
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
+stimulus.FixationBreakRecent= 0;
 stimulus.FixationBreakCurrent = 0;
+stimulus.trialAttemptNum = 0;
+stimulus.numFixBreak = 0;
+stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
 
 task{1}.random = 1;
-[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback);
+[task{1}, myscreen] = initTask(task{1},myscreen,@StartSegmentCallback,@DrawStimulusCallback,@responseCallback,@recalibrateCallback,@makeStimCallback);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STAIRCASE
@@ -138,7 +142,7 @@ stimulus.stair.minThreshold = .5; stimulus.stair.maxThreshold = 50;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 myscreen = initStimulus('stimulus',myscreen);
-stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
+stimulus = myInitStimulusCONTstair(stimulus,myscreen,task,indContrast);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,9 +239,10 @@ elseif (task.thistrial.thisseg == 4) % Stimulus
     % the contrast value is the threshold itself
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
     
-    drawGabor(stimulus.stair.threshold/100,...
+    drawGaborCONTstair(stimulus.stair.threshold/100,...
               stimulus.tmp.targetLocation,...
-              ((stimulus.rotation(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))*stimulus.indTilt)),1);
+              ((stimulus.rotation(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))*stimulus.indTilt)),1,...
+              task.thistrial.trialIndex);
 
     end
     
@@ -296,4 +301,57 @@ function drawRespCue(loc)
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
               stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
     
+end
+%% recalibrateCallback
+function [task, myscreen] = recalibrateCallback(task,myscreen)
+global stimulus
+
+stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+
+if stimulus.FixationBreakCurrent
+    
+    stimulus.numFixBreak = stimulus.numFixBreak+1;
+    stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
+    
+    if  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+        
+        if stimulus.FixationBreakRecent < 3
+            
+            stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
+            
+        else stimulus.FixationBreakRecent
+            stimulus.FixationBreakRecent = 0;
+            myscreen = eyeCalibDisp(myscreen);
+        end
+    else
+        
+        stimulus.FixationBreakRecent = 0;
+        
+    end
+end
+
+end
+
+%% makeStimCallback
+function [task,myscreen] = makeStimCallback(task,myscreen)
+global stimulus
+
+gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,task.thistrial.randVars.phase);
+
+
+ res = mkR([size(gratingMatrix,1) size(gratingMatrix,2)]);
+ 
+ [Xtbl,Ytbl] = rcosFn(size(gratingMatrix,1),(stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+ grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
+ 
+ 
+
+% stimulus.texture
+grating(:,:,1) = stimulus.midGratingColors+gratingMatrix*(127*stimulus.stair.threshold);
+grating(:,:,2) = grating(:,:,1);
+grating(:,:,3) = grating(:,:,1);
+stimulus.tex{stimulus.trialAttemptNum+1} = mglCreateTexture(grating);
+         
+         
+         
 end
