@@ -73,7 +73,7 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 2; %num trials = num(conts*oris*locs*repeats)
+n_repeats = 15; %num trials = num(conts*oris*locs*repeats)
 
 if diagonal == 1  
     [contrast,ori,location,trialNum] = ndgrid(1,1:2,[1,3],1:n_repeats);
@@ -315,20 +315,25 @@ if stimulus.FixationBreakCurrent && stimulus.EyeTrack
     stimulus.numFixBreak = stimulus.numFixBreak+1;
     stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
     
-    if  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+    if stimulus.numFixBreak < 2
+        
+        stimulus.FixationBreakRecent = 0;
+        
+    elseif  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
         
         if stimulus.FixationBreakRecent < 3
             
             stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
             
-        elseif stimulus.FixationBreakRecent
+        else
             stimulus.FixationBreakRecent = 0;
-            myscreen = eyeCalibDisp(myscreen);
+%             myscreen = eyeCalibDisp(myscreen);
+            eyeCalibDisp(myscreen);
+            stimulus.FixationBreakCurrent = 0;
         end
+        
     else
-        
         stimulus.FixationBreakRecent = 0;
-        
     end
 end
 

@@ -16,7 +16,7 @@ function fixCheck(myscreen,task)
 %         end
 %         
 %     else
-        if (sqrt(ep(end,1)^2+ep(end,2)^2))>stimulus.TrialStartFixDist && ~stimulus.FixationBreakCurrent
+        if (sqrt(ep(end,1)^2+ep(end,2)^2)) > stimulus.TrialStartFixDist && ~stimulus.FixationBreakCurrent
             stimulus.FixationBreak(task.trialnum)=1;
             stimulus.FixationBreakCurrent = 1;
             stimulus.updateCurrent = 0;

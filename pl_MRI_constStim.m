@@ -79,7 +79,7 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 1;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
@@ -327,24 +327,27 @@ stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 
 if stimulus.FixationBreakCurrent
     
-
+    
     stimulus.numFixBreak = stimulus.numFixBreak+1;
     stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
     
     if  stimulus.numFixBreak < 2
+        
         stimulus.FixationBreakRecent = 0;
+        
     elseif (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
         
         if stimulus.FixationBreakRecent < 3
             
             stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
             
-        else stimulus.FixationBreakRecent
-            
+        else
             stimulus.FixationBreakRecent = 0;
-            myscreen = eyeCalibDisp(myscreen);
-            
+%             myscreen = eyeCalibDisp(myscreen);
+            eyeCalibDisp(myscreen);
+            stimulus.FixationBreakCurrent = 0;
         end
+        
     else
         stimulus.FixationBreakRecent = 0;
     end

@@ -206,9 +206,9 @@ global stimulus;
 mglClearScreen(stimulus.grayColor);%###
 stimulus.trialend = task.numTrials;
 if (task.thistrial.thisseg == 9) % ITI
+    stimulus.testFix1 = 0;
     drawFixation(task);
     
-    stimulus.testFix1 = 0;
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
     
     drawFixation(task);
@@ -216,6 +216,7 @@ elseif (task.thistrial.thisseg == 1) % Initial Fixation
     if ~stimulus.testFix1 
         stimulus.FixationBreak(task.trialnum) = 0;
         stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
         stimulus.testFix1  = 1;
     end
     
@@ -326,12 +327,14 @@ stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 
 if stimulus.FixationBreakCurrent
     
-
+    
     stimulus.numFixBreak = stimulus.numFixBreak+1;
     stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
     
     if  stimulus.numFixBreak < 2
+        
         stimulus.FixationBreakRecent = 0;
+        
     elseif (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
         
         if stimulus.FixationBreakRecent < 3
@@ -342,6 +345,7 @@ if stimulus.FixationBreakCurrent
             
             stimulus.FixationBreakRecent = 0;
             myscreen = eyeCalibDisp(myscreen);
+            stimulus.FixationBreakRecent = 0;
             
         end
     else

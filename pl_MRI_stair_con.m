@@ -324,24 +324,28 @@ if stimulus.FixationBreakCurrent
     stimulus.numFixBreak = stimulus.numFixBreak+1;
     stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
     
-    if  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+    if stimulus.numFixBreak < 2
+        
+        stimulus.FixationBreakRecent = 0;
+        
+    elseif  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
         
         if stimulus.FixationBreakRecent < 3
             
             stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
             
-        else stimulus.FixationBreakRecent
+        else
             stimulus.FixationBreakRecent = 0;
-            myscreen = eyeCalibDisp(myscreen);
+%             myscreen = eyeCalibDisp(myscreen);
+            eyeCalibDisp(myscreen);
+            stimulus.FixationBreakCurrent = 0;
         end
+            
     else
-        
         stimulus.FixationBreakRecent = 0;
-        
     end
 end
 end
-
 %% makeStimCallback
 function [task,myscreen] = makeStimCallback(task,myscreen)
 global stimulus
