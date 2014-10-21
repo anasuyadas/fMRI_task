@@ -100,15 +100,17 @@ task{1}.randVars.trialIndex = random_order;
 stimulus.trialend = 0;
 stimulus.trialnum=1;
 stimulus.FixationBreak=zeros(1,length(location(:)));
+stimulus.FixationBreakCurrent = 0;
 stimulus.FixationBreakRecent= 0;
-stimulus.FixationBreakCurrent=0;
-stimulus.trialAttemptNum = 0;
-stimulus.numFixBreak = 0;
+stimulus.trialAttemptNum = 1;
+stimulus.numFixBreaks = 0;
 stimulus.fixationBreakTrialVect = 0;
 stimulus.LocationIndices=unique(location);
 stimulus.upDated = 1;
 stimulus.fixBreakTRACKindex = 0;
 stimulus.testFix1 = 0;
+stimulus.firstFixBreak = 0;
+stimulus.increasedAttemptNum= 0;
 
 stimulus.indTilt=indTilt;
 stimulus.preCue.type = cueType;
@@ -169,6 +171,8 @@ global stimulus
 
 if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
+    stimulus.increasedAttemptNum = 0;
+    stimulus.testFix1 = 0;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
     task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
@@ -185,7 +189,18 @@ elseif (task.thistrial.thisseg == 1) % fixation
     for i=1:2
         stimulus.tmp.preCueNeutLocation{i}=stimulus.preCueNeutLocation{i};
     end
+    if ~stimulus.testFix1 
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
+        stimulus.upDated = 0;
+        stimulus.testFix1  = 1;
+    end
     
+    if (1 < task.trialnum) && ~stimulus.increasedAttemptNum
+        stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+        stimulus.increasedAttemptNum = 1;
+    end
     
 elseif (task.thistrial.thisseg == 8) % response
     stimulus.trialnum = stimulus.trialnum + 1;
@@ -308,33 +323,32 @@ end
 function [task, myscreen] = recalibrateCallback(task,myscreen)
 global stimulus
 
-stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
 
-if stimulus.FixationBreakCurrent && stimulus.EyeTrack
+if stimulus.FixationBreakCurrent
     
-    stimulus.numFixBreak = stimulus.numFixBreak+1;
-    stimulus.fixationBreakTrialVect(stimulus.numFixBreak) = stimulus.trialAttemptNum;
-    
-    if stimulus.numFixBreak < 2
+    if  stimulus.numFixBreaks < 2
         
         stimulus.FixationBreakRecent = 0;
-        
-    elseif  (stimulus.fixationBreakTrialVect(stimulus.numFixBreak) - stimulus.fixationBreakTrialVect(stimulus.numFixBreak-1)) < 3
+        stimulus.recalib(stimulus.trialAttemptNum) = 0;
+    elseif (stimulus.fixationBreakTrialVect(stimulus.numFixBreaks) - stimulus.fixationBreakTrialVect(stimulus.numFixBreaks-1)) < 3
         
         if stimulus.FixationBreakRecent < 3
             
             stimulus.FixationBreakRecent = stimulus.FixationBreakRecent+1;
-            
+            stimulus.recalib(stimulus.trialAttemptNum) = 0;
         else
             stimulus.FixationBreakRecent = 0;
+            stimulus.recalib(stimulus.trialAttemptNum) = 1;
 %             myscreen = eyeCalibDisp(myscreen);
-            eyeCalibDisp(myscreen);
-            stimulus.FixationBreakCurrent = 0;
+            eyeCalibDisp(myscreen);            
+            
         end
-        
+            
     else
         stimulus.FixationBreakRecent = 0;
+        stimulus.recalib(stimulus.trialAttemptNum) = 0;
     end
+else
+    stimulus.recalib(stimulus.trialAttemptNum) = 0;
 end
-
 end

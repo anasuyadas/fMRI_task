@@ -2,10 +2,7 @@
 particpant = 'idTestALL_5';
 
 oriThresh = 1.34;%oriThreshEst;
-contThresh = .065;%contThreshEst;  c
-
-
-1212
+contThresh = .065;%contThreshEst;
 numBlocks = 2;
 
 

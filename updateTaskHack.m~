@@ -16,28 +16,37 @@ if tnum > length(task)
   return
 end
 
+if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent && ~stimulus.upDated
+    
+            if task{1}.numTrials == task{1}.origNumTrials
+                n = 1;
+            else
+                n = length(task{1}.fixBreakTrial)+1;
+            end
+            
+            task{1}.fixBreakTrial{n} = task{1}.thistrial;
+            task{1}.numTrials = task{1}.origNumTrials + stimulus.numFixBreaks;
+            task{1}.randVars.len_ = task{1}.numTrials;21222222212211212211
+            
+            
+            1212222221222
+            task{1}.randVars.varlen_ = task{1}.numTrials;
+            task{1}.randVars.trialIndex(task{1}.numTrials) = stimulus.fixBreakTRACKindex(end);
+            
+%             stimulus.trialend = stimulus.trialend+1;
+            stimulus.updateCurrent = 1; 
+            stimulus.upDated = 1;
+            
+elseif stimulus.FixationBreakCurrent
+    stimulus.upDated = 0;
+end
 % set the random state
 randstate = rand(myscreen.randstate.type);
 rand(task{tnum}.randstate.type,task{tnum}.randstate.state);
 
 
 
-if stimulus.FixationBreakCurrent && ~stimulus.updateCurrent && ~stimulus.upDated
-            if task{1}.numTrials == task{1}.origNumTrials
-                n = 1;
-            else
-                n = length(task{1}.fixBreakTrial)+1;
-            end
-            task{1}.fixBreakTrial{n} = task{1}.thistrial;
-            task{1}.numTrials = task{1}.numTrials + 1;
-            task{1}.randVars.len_ = task{1}.numTrials;
-            task{1}.randVars.trialIndex(task{1}.numTrials) = task{1}.randVars.trialIndex(task{1}.trialnum);
-            stimulus.trialend = stimulus.trialend+1;
-            stimulus.updateCurrent = 1; 
-            stimulus.upDated = 1;
-else
-    stimulus.upDated = 0;
-end
+
 
 
 % if we have finished how many trials were called for go to next task
