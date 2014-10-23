@@ -79,7 +79,7 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 1;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
@@ -227,6 +227,19 @@ if (task.thistrial.thisseg == 9) % ITI
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
+    
+    if ~stimulus.testFix1 
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
+        stimulus.upDated = 0;
+        stimulus.testFix1  = 1;
+    end
+   
+    if (1 < task.trialnum) && ~stimulus.increasedAttemptNum
+        stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
+        stimulus.increasedAttemptNum = 1;
+    end
     
     drawFixation(task);
     

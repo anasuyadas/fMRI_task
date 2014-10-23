@@ -1,12 +1,12 @@
 
-particpant = 'idTestALL_5';
+particpant = 'LD';
 
-oriThresh = 1.34;%oriThreshEst;
-contThresh = .065;%contThreshEst;
-numBlocks = 2;
+oriThresh = oriThreshEst;
+contThresh = contThreshEst;
+numBlocks = 10;
 
 
-diagonals = [1,2];
+diagonals = [1,1];
 diagonals = repmat(diagonals,[1,numBlocks/length(diagonals)]);
 
 for block = 1:numBlocks

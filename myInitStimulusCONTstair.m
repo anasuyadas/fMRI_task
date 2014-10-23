@@ -57,11 +57,11 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 4;%4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 4;%4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 3;%4;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 3;%4;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
-stimulus.sizedg = 4;%should be reset to 3degs
+stimulus.sizedg = 3;%should be reset to 3degs
 
 stimulus.rotation = [1,-1]; % this is the tilt orientation of the gabor stimulus from vertical in Degrees
 stimulus.init = 1;
@@ -102,7 +102,7 @@ stimulus.tex{1} = mglCreateTexture(grating);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fixation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-stimulus.FCwidth = 1;
+stimulus.FCwidth = .6;
 stimulus.FClinewidth = 3;
 stimulus.TrialStartFixDist=2; %2 degree radius in which to fixate before trial starts
 stimulus.TrialStartFixDur=.25;
@@ -140,9 +140,9 @@ respCue.width =3;
 
 preCue.length = .8;
 preCue.height = .2;
-preCue.distToStim = .4 + (stimulus.height/2); %distance from center
+preCue.distToStim = .2 + (stimulus.height/2); %distance from center
 
-neutCue.distToFixation = .3 + stimulus.FCwidth; %distance from center
+neutCue.distToFixation = .2 + stimulus.FCwidth; %distance from center
 
 stimulus.preCue.width =3;
 

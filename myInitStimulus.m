@@ -57,11 +57,11 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 4;%4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 4;%4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 3;%4;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 3;%4;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
-stimulus.sizedg = 4;%should be reset to 3degs
+stimulus.sizedg = 3;%should be reset to 3degs
 
 stimulus.rotation = [1,-1]; % this is the tilt orientation of the gabor stimulus from vertical in Degrees
 stimulus.init = 1;
@@ -91,7 +91,7 @@ end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
-[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1),(stimulus.sizedg), [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 
@@ -112,7 +112,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fixation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-stimulus.FCwidth = 1;
+stimulus.FCwidth = .6;
 stimulus.FClinewidth = 3;
 stimulus.TrialStartFixDist=2; %2 degree radius in which to fixate before trial starts
 stimulus.TrialStartFixDur=.25;
@@ -150,22 +150,22 @@ respCue.width =3;
 
 preCue.length = .8;
 preCue.height = .2;
-preCue.distToStim = .4 + (stimulus.height/2); %distance from center
+preCue.distToStim = .2 + (stimulus.height/2); %distance from center
 
-neutCue.distToFixation = .3 + stimulus.FCwidth; %distance from center
+neutCue.distToFixation = .1 + stimulus.FCwidth; %distance from center
 
 stimulus.preCue.width =3;
 
 % make matrices in stimulus structure
 stimulus.preCueExgLocation = cell(4,1);
 for loc = 1:4
-    if stimulus.locationsEcc{loc}(2) > 0 
+    if stimulus.locationsEcc{loc}(2) > 0 %Is it above horizontal meridian? if so, put preCue ABOVE the stimulus
         stimulus.preCueExgLocation{loc} = [(stimulus.locationsEcc{loc}(1))-preCue.length/2,...
                                            (stimulus.locationsEcc{loc}(2))+preCue.distToStim;...
                                
                                            (stimulus.locationsEcc{loc}(1))+preCue.length/2,...
                                            (stimulus.locationsEcc{loc}(2))+preCue.distToStim];
-    else
+    else %if below horizontal meridian, put preCue BELOW the stimulus
          stimulus.preCueExgLocation{loc} =[(stimulus.locationsEcc{loc}(1))-preCue.length/2,...
                                            (stimulus.locationsEcc{loc}(2))-preCue.distToStim;...
                         

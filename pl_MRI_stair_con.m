@@ -212,9 +212,7 @@ elseif (task.thistrial.thisseg == 1) % fixation
     
 elseif (task.thistrial.thisseg == 8) % response
     stimulus.trialnum = stimulus.trialnum + 1;
-    if ~task.thistrial.gotResponse
-        mglPlaySound(stimulus.noanswer);
-    end;
+
 end
 
 mglClearScreen(stimulus.grayColor);
