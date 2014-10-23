@@ -57,8 +57,8 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 3;%4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 3;%4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 3.5;%4;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 3.5;%4;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
 stimulus.sizedg = 3;%should be reset to 3degs
@@ -91,7 +91,8 @@ end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
-[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1),stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
+
+[Xtbl,Ytbl] = rcosFn(30,size(gratingMatrix{1},1)/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 

@@ -175,7 +175,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.testFix1 = 0;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .8 .03 iti];
+    task.thistrial.seglen =[0.1 .06 .04 5 .3 .3 .8 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];
     

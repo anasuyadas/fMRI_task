@@ -16,7 +16,7 @@ if round(stimulus.nDisplayContrasts*desiredContrast/stimulus.currentMaxContrast)
     keyboard
 end
 
-mglBltTexture(stimulus.tex{stimulus.trialAttemptNum},position,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
+mglBltTexture(60,stimulus.sizedg*stimulus.xpxpdeg/2,0,0,orientation); %mglBltTexture(texture,position,hAlignment,vAlignment,rotation)
 
 % disp(sprintf('orientation for this trial is %f',desiredContrast));
 end

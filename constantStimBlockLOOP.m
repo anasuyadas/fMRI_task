@@ -6,7 +6,7 @@ contThresh = contThreshEst;
 numBlocks = 10;
 
 
-diagonals = [1,1];
+diagonals = [1,2];
 diagonals = repmat(diagonals,[1,numBlocks/length(diagonals)]);
 
 for block = 1:numBlocks

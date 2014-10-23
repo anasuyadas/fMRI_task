@@ -88,7 +88,7 @@ gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,sti
 
  res = mkR([size(gratingMatrix,1) size(gratingMatrix,2)]);
  
- [Xtbl,Ytbl] = rcosFn(size(gratingMatrix,1),(stimulus.sizedg)/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+ [Xtbl,Ytbl] = rcosFn(60,stimulus.sizedg*stimulus.xpxpdeg/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
  grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
  
  
