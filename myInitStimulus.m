@@ -14,8 +14,8 @@ stimulus.linearizedGammaTable.blueTable(1:3) = 0;
 stimulus.xpxpcm = myscreen.screenWidth/myscreen.displaySize(1);
 stimulus.ypxpcm = myscreen.screenHeight/myscreen.displaySize(2);
 
-stimulus.xpxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*xpxpcm);
-stimulus.ypxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*ypxpcm);
+stimulus.xpxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*stimulus.xpxpcm);
+stimulus.ypxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*stimulus.ypxpcm);
 
 % centerpix = [myscreen.screenWidth/2,myscreen.screenHeight/2];
 
@@ -91,9 +91,9 @@ end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
+keyboard
 
-
-[Xtbl,Ytbl] = rcosFn(60,stimulus.sizedg*stimulus.xpxpdeg/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
+[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1)/5,stimulus.sizedg*stimulus.xpxpdeg/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 

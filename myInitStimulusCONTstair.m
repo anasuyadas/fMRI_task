@@ -11,13 +11,13 @@ stimulus.linearizedGammaTable.greenTable(1:3) = 0;
 stimulus.linearizedGammaTable.blueTable(1:3) = 0;
 
 
-% xpxpcm = myscreen.screenWidth/myscreen.displaySize(1);
-% ypxpcm = myscreen.screenHeight/myscreen.displaySize(2);
-%
-% xpxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*xpxpcm);
-% ypxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*ypxpcm);
-% 
-% centerpix = [myscreen.screenWidth/2,myscreen.screenHeight/2];
+stimulus.xpxpcm = myscreen.screenWidth/myscreen.displaySize(1);
+stimulus.ypxpcm = myscreen.screenHeight/myscreen.displaySize(2);
+
+stimulus.xpxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*stimulus.xpxpcm);
+stimulus.ypxpdeg = ceil(tan(2*pi/360)*myscreen.displayDistance*stimulus.ypxpcm);
+
+centerpix = [myscreen.screenWidth/2,myscreen.screenHeight/2];
 
 stimulus.contrasts =contrast;
 
@@ -57,8 +57,8 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 3;%4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 3;%4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 4;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 4;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
 stimulus.sizedg = 3;%should be reset to 3degs
@@ -88,7 +88,7 @@ gratingMatrix = mglMakeGrating(stimulus.width,stimulus.height,stimulus.sf,90,sti
 
  res = mkR([size(gratingMatrix,1) size(gratingMatrix,2)]);
  
- [Xtbl,Ytbl] = rcosFn(60,stimulus.sizedg*stimulus.xpxpdeg/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
+ [Xtbl,Ytbl] = rcosFn(size(gratingMatrix,1)/5,stimulus.sizedg*stimulus.xpxpdeg/2, [1 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is eidth pixels => MAKE INTO VARIABLE
  grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
  
  

@@ -1,6 +1,6 @@
 function myscreen = pl_MRI_constStim(observer,varargin)
 
-%%% Pilot with only valid and invalid conditions
+%%% Pilot with only valid and neutral conditions
 %
 % https://github.com/anasuyadas/fMRI_task.git
 
