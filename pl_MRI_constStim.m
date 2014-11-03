@@ -105,6 +105,7 @@ random_order = randperm(task{1}.numTrials);
 
 stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
 stimulus.randVars.contrast = contrast(random_order);
+
 stimulus.randVars.targetOrientation = ori(random_order);
 
 
