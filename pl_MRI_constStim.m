@@ -181,7 +181,6 @@ elseif (task.thistrial.thisseg == 1) % fixation
     
     stimulus.FixationStarted=0;
     %response cue
-    stimulus.tmp.respcueLocation=stimulus.respcueLocation{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}; %if polygon
     stimulus.tmp.respcueLocation=stimulus.randVars.targetLocation(task.thistrial.trialIndex); %if central x
     %stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
     
@@ -274,7 +273,7 @@ elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
     if stimulus.EyeTrack && ~stimulus.FixationBreakCurrent, fixCheck(myscreen,task); end
     if ~stimulus.FixationBreakCurrent  || ~stimulus.EyeTrack
-        drawRespCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex)); % has to be a positive integer
+        drawRespCue(stimulus.tmp.respcueLocation); % has to be a positive integer
     end
 
 elseif (task.thistrial.thisseg == 7) % Resp Window

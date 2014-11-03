@@ -95,8 +95,6 @@ res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 
-
-
 disppercent(-inf,'Calculating gabors');
 for thisSF = 1:(length(stimulus.sf)*length(stimulus.phase))
         % stimulus.texture

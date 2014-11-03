@@ -5,8 +5,17 @@ function drawFixation(task)
     mglTextSet('Helvetica',24,[1 1 1],0,0,0,1,0,0,0);
     thisText = mglText('please fixate');
     
-    if stimulus.FixationBreakCurrent && (1 <= task.thistrial.thisseg < 9)  %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
+    if isfield(stimulus,'FixationBreakCurrent')
+        checkFix=stimulus.FixationBreakCurrent;
+    else
+        checkFix=0;
+    end
+        
+    if  checkFix && (1 <= task.thistrial.thisseg < 9)  %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
        mglBltTexture(thisText,[0 0],'left','top');
+    
+    elseif  (task.thistrial.thisseg == 1)
+        mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.black); %if there is no response & it is not the response window or feedback window, just present white fixation
     
     elseif ~task.thistrial.gotResponse || (task.thistrial.thisseg == 9)
         mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.white); %if there is no response & it is not the response window or feedback window, just present white fixation
