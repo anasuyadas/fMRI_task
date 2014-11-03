@@ -1,12 +1,14 @@
 
-particpant = 'LD';
-
+particpant = 'HL';
+  
+ 
+ 
 oriThresh = oriThreshEst;
 contThresh = contThreshEst;
-numBlocks = 10;
+numBlocks = 6;
 
 
-diagonals = [1,2];
+diagonals = [2,1];
 diagonals = repmat(diagonals,[1,numBlocks/length(diagonals)]);
 
 for block = 1:numBlocks
