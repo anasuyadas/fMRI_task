@@ -91,12 +91,8 @@ end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
-keyboard
-
 [Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1)/5,stimulus.sizedg*stimulus.xpxpdeg/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
-
-
 
 
 disppercent(-inf,'Calculating gabors');
