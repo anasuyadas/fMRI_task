@@ -72,8 +72,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 0;
-task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
-task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  
+task{1}.segmin =     [0.5 .06 .04 .1 .4 .4 1 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.5 .06 .04 .1 .4 .4 1 .03 2];  
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
@@ -182,7 +182,7 @@ if (task.thistrial.thisseg == 9) % ITI
     stimulus.testFix1 = 0;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti = .6;%task.thistrial.iti;
-    task.thistrial.seglen =[0.1 .06 .04 0.1 .3 .3 .8 .03 iti];
+    task.thistrial.seglen =[0.5 .06 .04 .1 .4 .4 1 .03 iti];
     %need to make sure that there are only two locations per run
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];
     

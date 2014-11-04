@@ -75,7 +75,7 @@ task{1}.segmax =     [0.5 .06 .04 .1 .4 .4 1.45 .03 2];
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0];
 task{1}.getResponse = [0 0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
-task{1}.synchToVol = [1 0 0 0 0 0 0 0 0];
+%task{1}.synchToVol = [0 1 0 0 0 0 0 0 0 0 0];
 
 n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
