@@ -70,10 +70,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 1;
-task{1}.segmin =     [1.45 0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
-task{1}.segmax =     [1.45 0.1 .06 .04 .1 .3 .3 .8 .03 2];  
+task{1}.segmin =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  % segments: 1:fixation, 2:cue 3: ISI 4:stimulus,5: post-stim ISI, 6:response cue 7:response, 8:feedback dur, 9:ITI code
+task{1}.segmax =     [0.1 .06 .04 .1 .3 .3 .8 .03 2];  
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0 0];
-task{1}.getResponse = [0 0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
+task{1}.getResponse = [0 0 0 0 0 0 1 1 0 0]; % responses are allowed during response intervals
 
 %task{1}.synchToVol = [0 1 0 0 0 0 0 0 0 0 0];
 
@@ -83,9 +83,9 @@ n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location
 %length approximately ~5minutes
 if diagonal == 1  
 
-    [contrast, iti,location,repeats] = ndgrid(1:2,1:3,[1,3],1:n_repeats);
+    [contrast, iti,location,repeats] = ndgrid(1:2,2:4,[1,3],1:n_repeats);
 else 
-    [contrast, iti,location,repeats] = ndgrid(1:2,1:3,[2,4],1:n_repeats);
+    [contrast, iti,location,repeats] = ndgrid(1:2,2:4,[2,4],1:n_repeats);
 end
 
 %contrast =3 is blank trials. We wants on ~10% of total trials to be blank
@@ -187,11 +187,11 @@ function [task, myscreen] = StartSegmentCallback(task, myscreen)
 % segments: 1:ITI,   2:fixation,    3:stimulus, 4:response
 global stimulus
 
-if (task.thistrial.thisseg == 10) % ITI
+if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
     iti =task.thistrial.iti;%iti = .6;
-    task.thistrial.seglen =[1.45 0.1 .06 .04 .1 .3 .3 .8 .03 iti]; % the length of the first fixation needs to be changed if we change our TR
+    task.thistrial.seglen =[0.1 .06 .04 .1 .3 .3 .8 .03 iti]; % the length of the first fixation needs to be changed if we change our TR
     %need to make sure that there are only two locations per run
 
     stimulus.tmp.targetLocation  = stimulus.eccentricity*[stimulus.locations{stimulus.randVars.targetLocation(task.thistrial.trialIndex)}];%[stimulus.locations{task.thistrial.targetLocation}];
@@ -228,24 +228,23 @@ global stimulus;
 
 mglClearScreen(stimulus.grayColor);%###
 
-if (task.thistrial.thisseg == 10) % ITI
+if (task.thistrial.thisseg ==9) % ITI
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Fixation turns black to signal the next trial
     drawFixation(task);
 %     if stimulus.EyeTrack, fixCheck; end
-elseif (task.thistrial.thisseg == 2) % Initial Fixation
-    drawFixation(task);
-elseif (task.thistrial.thisseg == 3) % Pre Cue
+
+elseif (task.thistrial.thisseg == 2) % Pre Cue
     drawFixation(task);
 %     if stimulus.EyeTrack, fixCheck; end
     drawPreCue(stimulus.randVars.targetLocation(task.thistrial.trialIndex));
     
-elseif (task.thistrial.thisseg == 4) % ISI 1 
+elseif (task.thistrial.thisseg == 3) % ISI 1 
     drawFixation(task);
 %     if stimulus.EyeTrack, fixCheck; end
     
-elseif (task.thistrial.thisseg == 5) % Stimulus
+elseif (task.thistrial.thisseg == 4) % Stimulus
     drawFixation(task);
     %check if its a blank trial 
     if stimulus.randVars.contrast(task.thistrial.trialIndex) == 3
@@ -261,19 +260,19 @@ elseif (task.thistrial.thisseg == 5) % Stimulus
           % the above line of code adds or subtracts the tilt from the base
           % orientation
     
-elseif (task.thistrial.thisseg == 6) % ISI 2
+elseif (task.thistrial.thisseg == 5) % ISI 2
     drawFixation(task);
 %     if stimulus.EyeTrack, fixCheck; end
     
-elseif (task.thistrial.thisseg == 7) % Resp Cue
+elseif (task.thistrial.thisseg == 6) % Resp Cue
     drawFixation(task);
 %     if stimulus.EyeTrack, fixCheck; end
     drawRespCue(stimulus.tmp.respcueLocation);
 
-elseif (task.thistrial.thisseg == 8) % Resp Window
+elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
     
-elseif (task.thistrial.thisseg == 9) % Feedback
+elseif (task.thistrial.thisseg == 8) % Feedback
     drawFixation(task);
 
 end

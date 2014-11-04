@@ -14,7 +14,7 @@ function drawFixation(task)
     if  checkFix && (1 <= task.thistrial.thisseg < 9)  %(stimulus.FixationBreak(task.trialnum))  %If there is a fixn break, present 
        mglBltTexture(thisText,[0 0],'left','top');
     
-    elseif  (task.thistrial.thisseg == 1)
+    elseif  (task.thistrial.thisseg >= 9)
         mglFixationCross(stimulus.FCwidth,stimulus.FClinewidth,stimulus.black); %if there is no response & it is not the response window or feedback window, just present white fixation
     
     elseif ~task.thistrial.gotResponse || (task.thistrial.thisseg == 9)
