@@ -10,6 +10,7 @@ global stimulus;
 if round(stimulus.nDisplayContrasts*desiredContrast/stimulus.currentMaxContrast)>stimulus.nDisplayContrasts
     disp(sprintf('[drawGabor] Desired contrast out of range %0.2f > %0.2f',desiredContrast,stimulus.currentMaxContrast));
     keyboard
+   
 end
 
 mglBltTexture(stimulus.tex{trialIndex},position,0,0,orientation);

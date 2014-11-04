@@ -79,7 +79,7 @@ task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during respon
 
 
 
-n_repeats = 4;%  trials per block n= 36; 3contrast*3ITIs*2location 
+n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
@@ -105,7 +105,6 @@ random_order = randperm(task{1}.numTrials);
 
 stimulus.randVars.targetLocation = location(random_order); %one of the 2 positions
 stimulus.randVars.contrast = contrast(random_order);
-
 stimulus.randVars.targetOrientation = ori(random_order);
 
 
@@ -335,7 +334,7 @@ if ieNotDefined('maxCont'), maxCont = .80; end
 
 cont2 = 10^(log10(minCont*100)+.25*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont3 = 10^(log10(threshCont*100)-.25*(log10(threshCont*100) - log10(minCont*100)))/100;
-cont5 = 10^(log10(threshCont*100)+(1/8)*(log10(maxCont*100) - log10(threshCont*100)))/100;
+cont5 = 10^(log10(threshCont*100)+.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
 cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
 
 

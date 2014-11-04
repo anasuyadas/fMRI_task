@@ -64,8 +64,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}.waitForBacktick = 1;
-task{1}.segmin =     [8 8];  % run the localizer for each diagonal in each block
-task{1}.segmax =     [8 8];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
+task{1}.segmin =     [12 12];  % run the localizer for each diagonal in each block
+task{1}.segmax =     [12 12];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
 task{1}.segquant =   [0 0];
 task{1}.getResponse = [0 0];
 task{1}.synchToVol = ones(size(task{1}.segquant));
