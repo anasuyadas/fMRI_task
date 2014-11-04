@@ -1,6 +1,7 @@
-function task = fixCheck(myscreen,task)
+function fixCheck(myscreen,task)
     global stimulus
   
+
     ep = myscreen.eyetracker.eyepos;
 
 
@@ -18,7 +19,7 @@ function task = fixCheck(myscreen,task)
 %         end
 %         
 %     else
-        if (sqrt(ep(end,1)^2+ep(end,2)^2)) > stimulus.TrialStartFixDist && ~stimulus.FixationBreakCurrent
+        if (sqrt(ep(end,1)^2+ep(end,2)^2)) > stimulus.TrialStartFixDist && ~stimulus.FixationBreakCurrent || sum(isnan(myscreen.eyetracker.eyepos))
             stimulus.FixationBreak(task.trialnum)=1;
             stimulus.FixationBreakCurrent = 1;
             stimulus.updateCurrent = 0;
@@ -28,19 +29,13 @@ function task = fixCheck(myscreen,task)
                 stimulus.fixBreakTRACKseg(1) = task.thistrial.thisseg;
                 stimulus.firstFixBreak = 1;
                 stimulus.numFixBreaks = 1;
+                stimulus.fixationBreakTrialVect(stimulus.numFixBreaks) = stimulus.trialAttemptNum;
             else
                 stimulus.fixBreakTRACKindex(1,length(stimulus.fixBreakTRACKindex)+1) = task.thistrial.trialIndex;
                 stimulus.fixBreakTRACKseg(1,length(stimulus.fixBreakTRACKseg)+1) = task.thistrial.thisseg;
                 stimulus.numFixBreaks = stimulus.numFixBreaks+1;
+                stimulus.fixationBreakTrialVect(stimulus.numFixBreaks) = stimulus.trialAttemptNum;
             end
-            
-            task.numTrials = task.origNumTrials + stimulus.numFixBreaks;
-            task.randVars.len_ = task.numTrials;
-            task.randVars.trialIndex(task.numTrials) = task.randVars.trialIndex(task.trialnum);
-            stimulus.updateCurrent = 1; 
-            stimulus.upDated = 1;
-            
-            
             
         end
 end
