@@ -131,7 +131,7 @@ myscreen = eyeCalibDisp(myscreen);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-mglSimulateRun(1.75,166,0)
+%mglSimulateRun(1.75,166,0)
 phaseNum = 1;
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
