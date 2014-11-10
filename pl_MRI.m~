@@ -107,7 +107,7 @@ stimulus.randVars.targetOrientation = ori(random_order);
 % ITI are the time left after the response+feedback window and a 10ms lag window. 
 %This makes sure we dont overshoot and miss the first TR after the ITI
 task{1}.randVars.iti= iti(random_order);
-task{1}.randVars.iti= (task{1}.randVars.iti.*TR) + (TR-1.03-.01);
+task{1}.randVars.iti= (task{1}.randVars.iti.*TR) + (TR-1.03-.1);
 
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
@@ -131,7 +131,7 @@ myscreen = eyeCalibDisp(myscreen);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-mglSimulateRun(1.75,160,0)
+mglSimulateRun(1.75,166,0)
 phaseNum = 1;
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
@@ -158,10 +158,10 @@ global stimulus
 if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
-     disp(sprintf('this is trial number %d',task.trialnum));
+     disp(sprintf('Starting trial number %d',task.trialnum));
     iti =task.thistrial.iti;%iti = .6;
     if task.trialnum == 1
-        task.thistrial.seglen =[0.5 .06 .04 .1 .35 .35 1 .03 iti];%delay the start of the first trial 
+        task.thistrial.seglen =[11 .06 .04 .1 .35 .35 1 .03 iti];%delay the start of the first trial by 6 TRs (6*1.75+0.5)
     else
         task.thistrial.seglen =[0.5 .06 .04 .1 .35 .35 1 .03 iti];    
     end
@@ -198,7 +198,9 @@ if (task.thistrial.thisseg ==9) % ITI
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Fixation turns black to signal the next trial
+    task.thistrial.t0=mglGetSecs();
     drawFixation(task);
+    
 %     if stimulus.EyeTrack, fixCheck; end
 
 elseif (task.thistrial.thisseg == 2) % Pre Cue
@@ -236,8 +238,11 @@ elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 8) % Feedback
+    
     drawFixation(task);
-
+     t=mglGetSecs();
+    disp(sprintf('elapsed time for this trial is %d seconds',t-task.thistrial.t0));
+   
 end
     
 end

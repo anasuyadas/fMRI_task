@@ -198,7 +198,9 @@ if (task.thistrial.thisseg ==9) % ITI
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 1) % Fixation turns black to signal the next trial
+    task.thistrial.t0=mglGetSecs();
     drawFixation(task);
+    
 %     if stimulus.EyeTrack, fixCheck; end
 
 elseif (task.thistrial.thisseg == 2) % Pre Cue
@@ -236,8 +238,11 @@ elseif (task.thistrial.thisseg == 7) % Resp Window
     drawFixation(task);
     
 elseif (task.thistrial.thisseg == 8) % Feedback
+    
     drawFixation(task);
-
+     t=mglGetSecs();
+    disp(sprintf('elapsed time for this trial is %d seconds',t-task.thistrial.t0));
+   
 end
     
 end
