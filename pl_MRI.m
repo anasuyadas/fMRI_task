@@ -131,7 +131,7 @@ myscreen = eyeCalibDisp(myscreen);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%mglSimulateRun(1.75,166,0)
+mglSimulateRun(1.75,166,0)
 phaseNum = 1;
 while (phaseNum <= length(task)) && ~myscreen.userHitEsc
     % update the task
@@ -158,7 +158,7 @@ global stimulus
 if (task.thistrial.thisseg == 9) % ITI
     stimulus.trialend = stimulus.trialend + 1;
 elseif (task.thistrial.thisseg == 1) % fixation
-     disp(sprintf('this is trial number %d',task.trialnum));
+     disp(sprintf('starting trial number %d at volume %d',task.trialnum,myscreen.volnum));
     iti =task.thistrial.iti;%iti = .6;
     if task.trialnum == 1
         task.thistrial.seglen =[11 .06 .04 .1 .35 .35 1 .03 iti];%delay the start of the first trial by 6 TRs (6*1.75+0.5)
