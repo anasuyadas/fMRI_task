@@ -16,10 +16,11 @@ mglOpen
 %     return
 % % end
 % 
-eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye'}));
+eval(evalargs(varargin,0,0,{'indContrast','diagonal','IndTilt','Eye','trainDiagonal'}));
 
 if ieNotDefined('indContrast'),indContrast = .4;end % initialize some default contrast vals
 if ieNotDefined('diagonal'),diagonal = 1;end % default diagonal. Can be zero or 1. diagonal 1: upper right+ lower left; diagonal 2: lower right + upper left. THIS NEEDSS TO BE DOUBLE CHECKED
+if ieNotDefined('trainDiagonal'), trainDiagonal = 1;end % trained diagonal = 1 ; untrained diagonal =0
 if ieNotDefined('indTilt'),indTilt = 10;end % default tilt
 if ieNotDefined('Eye'),Eye = 0;end % no eye-tracking
 if ieNotDefined('cueType'),cueType = 0;end
@@ -77,7 +78,7 @@ task{1}.segmax =     [0.5 .06 .04 .1 .4 .4 1 .03 2];
 task{1}.segquant =   [0 0 0 0 0 0 0 0 0]; % I guess, ITI varies in steps of 0.25
 task{1}.getResponse = [0 0 0 0 0 0 1 0 0]; % responses are allowed during response intervals
 
-
+task{1}.trainDiagonal=trainDiagonal;
 
 n_repeats = 4;%  trials per block n= 36; 3contrast*3ITIs*2location 
 % Number of volumes = (n)+(n/3*2)+(n/3*3)+(n/3*4).
@@ -112,7 +113,7 @@ stimulus.randVars.targetOrientation = ori(random_order);
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
 
-
+stimulus.respKeys = [1,2];
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
@@ -296,8 +297,7 @@ global stimulus;
 mglClearScreen(stimulus.grayColor); %###
 if ~task.thistrial.gotResponse
     % check response correct or not
-        stimulus.tmp.response = task.thistrial.whichButton == (stimulus.randVars.targetOrientation(task.thistrial.trialIndex)); %1 for left and 2 for right
-    
+        stimulus.tmp.response = task.thistrial.whichButton == (stimulus.respKeys(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))); %1 for left and 2 for right
 end
 
 end

@@ -96,6 +96,7 @@ stimulus.randVars.targetOrientation = ori(random_order);
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
 
+stimulus.respKeys = [1,2];
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
@@ -290,8 +291,8 @@ mglClearScreen(stimulus.grayColor); %###
 if ~task.thistrial.gotResponse
     
     % check response correct or not
-stimulus.tmp.response = task.thistrial.whichButton == (stimulus.randVars.targetOrientation(task.thistrial.trialIndex)); %1 for left and 2 for right
-    
+stimulus.tmp.response = task.thistrial.whichButton == (stimulus.respKeys(stimulus.randVars.targetOrientation(task.thistrial.trialIndex))); %1 for left and 2 for right
+   
 end
 if ~stimulus.FixationBreakCurrent || ~stimulus.EyeTrack
     stimulus.stair = upDownStaircase(stimulus.stair,stimulus.tmp.response);
