@@ -1,17 +1,27 @@
 
-particpant = 'HL';
+particpant = 'AD';
   
  
- 
+
+11121122112112112222122222222111111111112212211112111211111112222111111111211121122222221111111111211222122211211111112211211111112
+
+21211222222222222211111112122222211111111111111112111111112122222222212211111111111111111211122112112222222222222211111121111112111222222222122211111111121222222111111111111111111112222222222222222221111212
+122222222222221
+
+111222111111112122111111112112111111111111112121222221111112111212
+
+trainDiagonal = 1;
+
 oriThresh = oriThreshEst;
 contThresh = contThreshEst;
 numBlocks = 6;
 
 
-diagonals = [2,1];
+diagonals = [1,2];
 diagonals = repmat(diagonals,[1,numBlocks/length(diagonals)]);
 
 for block = 1:numBlocks
-    pl_MRI_constStim(particpant,'Eye',1,'indTilt',oriThresh,'indContrast',contThresh,'diagonal',diagonals(block))
+    pl_MRI_constStim(particpant,'Eye',1,'diagonal',diagonals(block),...
+                     'indTilt',oriThresh,'indContrast',contThresh,'trainDiagonal',trainDiagonal)
     
 end

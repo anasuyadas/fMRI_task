@@ -16,3 +16,13 @@ contThreshEst1 = mean(stimulus.stair.strength(stimulus.stair.reversals((length(s
 contThreshEst2 = mean(stimulus.stair.strength(stimulus.stair.reversals((length(stimulus.stair.reversals)-6):end)));
 
 contThreshEst = mean([contThreshEst1,contThreshEst2]);
+
+
+
+
+
+%%
+
+contThreshEst3 = mean(stimulus.stair.strength(stimulus.stair.reversals((length(stimulus.stair.reversals)-6):end)));
+%%
+contThreshEst4 = mean(stimulus.stair.strength(stimulus.stair.reversals((length(stimulus.stair.reversals)-6):end)));
