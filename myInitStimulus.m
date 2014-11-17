@@ -37,7 +37,7 @@ stimulus.nDisplayContrasts = stimulus.deltaGratingColors;
 % to set up color values
 
 stimulus.black = [0 0 0];
-stimulus.white = [1/255 1/255 1/255];
+stimulus.white = [255 255 255];
 stimulus.green = [0 160 0];
 stimulus.blue = [0 0 160];
 stimulus.greencorrect = [0 200 20];
@@ -69,7 +69,7 @@ stimulus.init = 1;
 stimulus.sf = 4;                % in cpd
 stimulus.orientation = 0;       % in deg
 stimulus.phase = 180.*rand(1,task{1}.numTrials); % in deg
-stimulus.eccentricity = 4.6;    % in deg
+stimulus.eccentricity = 3.5;    % in deg
 
 stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind(45)];[-cosd(45), -sind(45)]};
 
@@ -91,7 +91,7 @@ end
 
 res = mkR([size(gratingMatrix{1},1) size(gratingMatrix{1},2)]);
 
-[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1)/5,stimulus.sizedg*stimulus.xpxpdeg/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
+[Xtbl,Ytbl] = rcosFn(size(gratingMatrix{1},1)/8,stimulus.sizedg*stimulus.xpxpdeg/2,[1,0]);%size(gratingMatrix{1},1),stimulus.sizedg/2, [1, 0]);%(stimulus.sizedg)/2, [1 0]); %1st argument is width pixels => MAKE INTO VARIABLE
 grating(:,:,4) = 255*pointOp(res, Ytbl, Xtbl(1), Xtbl(2)-Xtbl(1), 0);
 
 
@@ -117,26 +117,40 @@ stimulus.TrialStartFixDur=.25;
 stimulus.cornerDist=1;
 stimulus.edgeDist=0;%presents stimuli after this duration when fixation detected
 
+stimulus.FCloc = cell(2,1);
 
+stimulus.FCloc{1} = [  cosd(135)*(stimulus.FCwidth),  sind(135)*(stimulus.FCwidth);...
+                      -cosd(135)*(stimulus.FCwidth), -sind(135)*(stimulus.FCwidth)];
+                         
+stimulus.FCloc{2} = [ cosd(45)*(stimulus.FCwidth),  sind(45)*(stimulus.FCwidth);...
+                     -cosd(45)*(stimulus.FCwidth), -sind(45)*(stimulus.FCwidth)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % RESPONSE CUE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %set parameters -> in degrees
-respCue.length = 0.5;
-respCue.startEcc = 0.5;
+respCue.length = stimulus.FCwidth;
+respCue.startEcc = 0;
 
-stimulus.respCue.width =3;
+stimulus.respCue.width =stimulus.FClinewidth;
 stimulus.respcueLocation = cell(4,1);
 
-for loc = 1:4
-        stimulus.respcueLocation{loc} = [stimulus.locations{loc}(1)*respCue.startEcc,...
-                                        stimulus.locations{loc}(2)*respCue.startEcc;...
-                        
-                                        stimulus.locations{loc}(1)*(respCue.startEcc+respCue.length),...
-                                        stimulus.locations{loc}(2)*(respCue.startEcc+respCue.length)];
-end
+% for loc = 1:4
+%         stimulus.respcueLocation{loc} = [0, 0;...
+%                                          stimulus.locations{loc}(1)*(respCue.length),...
+%                                          stimulus.locations{loc}(2)*(respCue.length)];
+% end
+
+stimulus.respcueLocation{1} = [stimulus.FCloc{1}(1,:);0,0];
+stimulus.respcueLocation{2} = [stimulus.FCloc{2}(1,:);0,0];
+stimulus.respcueLocation{3} = [0,0;stimulus.FCloc{1}(2,:)];
+stimulus.respcueLocation{4} = [0,0;stimulus.FCloc{2}(2,:)];
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PRE CUE

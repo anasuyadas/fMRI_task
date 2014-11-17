@@ -116,6 +116,8 @@ task{1}.randVars.iti= (task{1}.randVars.iti.*TR) + (TR-1.03-.1);
 
 task{1}.randVars.len_ = task{1}.numTrials;
 task{1}.randVars.trialIndex = random_order;
+task{1}.randVars.trialIndex = stimulus.randVars.targetLocation;
+task{1}.randVars.trialIndex = stimulus.randVars.contrast;
 
 stimulus.trialend = 0;
 stimulus.trialnum=1;
@@ -274,10 +276,15 @@ end
 
 end
 
+%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % drawRespCue
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function drawRespCue(loc)
     global stimulus
     
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
-              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
+              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black,1);
     
 end
