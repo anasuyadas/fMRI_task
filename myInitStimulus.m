@@ -160,11 +160,11 @@ stimulus.respcueLocation{4} = [0,0;stimulus.FCloc{2}(2,:)];
 % stimulus.preCue.type = 1; %should be always neutral for staircase
 respCue.width =3;
 
-preCue.length = .8;
+preCue.length = 1.2;
 preCue.height = .2;
 preCue.distToStim = .2 + (stimulus.height/2); %distance from center
 
-neutCue.distToFixation = .1 + stimulus.FCwidth; %distance from center
+neutCue.distToFixation = .3 + stimulus.FCwidth; %distance from center
 
 stimulus.preCue.width =3;
 
