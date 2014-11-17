@@ -186,14 +186,6 @@ elseif (task.thistrial.thisseg == 1) % fixation
     stimulus.tmp.respcueLocation=stimulus.randVars.targetLocation(task.thistrial.trialIndex); %if central x
     %stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
     
-    if ~stimulus.testFix1 
-        stimulus.FixationBreak(task.trialnum) = 0;
-        stimulus.FixationBreakCurrent = 0;
-        stimulus.updateCurrent = 1;
-        stimulus.upDated = 0;
-        stimulus.testFix1  = 1;
-    end
-    
     if (1 < task.trialnum) && ~stimulus.increasedAttemptNum
         stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
         stimulus.increasedAttemptNum = 1;
@@ -316,7 +308,7 @@ function drawRespCue(loc)
     global stimulus
     
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
-              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
+              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black,1);
     
 end
 %% makeContLevels

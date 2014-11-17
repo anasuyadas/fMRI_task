@@ -276,10 +276,15 @@ end
 
 end
 
+%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % drawRespCue
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function drawRespCue(loc)
     global stimulus
     
     mglLines2(stimulus.respcueLocation{loc}(1), stimulus.respcueLocation{loc}(3),...
-              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black);
+              stimulus.respcueLocation{loc}(2), stimulus.respcueLocation{loc}(4),stimulus.respCue.width,stimulus.black,1);
     
 end

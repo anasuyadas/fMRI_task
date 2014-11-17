@@ -2,9 +2,9 @@
 
 
 numBlocks = 6;
-participant = 'HL';
+participant = 'id2';
 
-fileNums = [1:3,11,9,10]; %which file numbers area the constant stimulus blocks?
+fileNums = [1:6]; %which file numbers area the constant stimulus blocks?
 
 numContrasts = 7;
 
@@ -22,12 +22,12 @@ for i = 1:2
         numResponses.diagonal{i} =  zeros(1,numContrasts);
 end
 
-diagonal = repmat([2,1],[1,3]);
+diagonal = repmat([1,2],[1,3]);
 
 
 addpath(sprintf('data/%s',participant));
 for block = 1:numBlocks
-    currExpFile = dir(sprintf('data/%s/*stim%d.mat',participant,fileNums(block)));
+    currExpFile = dir(sprintf('data/%s/*stim0%d.mat',participant,fileNums(block)));
     load(sprintf('%s',currExpFile.name));
     
     exp = getTaskParameters(myscreen,task);
@@ -135,6 +135,8 @@ for diagonalFit = 1:2
 end
 
 perfStruct{1}.fitPercCorr = fitPercCorr;
+
+
 %% plot
 xCurve = logspace(.001,2,10000);
 xCurveLOG = log10(xCurve);
