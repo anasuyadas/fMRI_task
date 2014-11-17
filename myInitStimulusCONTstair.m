@@ -37,7 +37,7 @@ stimulus.nDisplayContrasts = stimulus.deltaGratingColors;
 % to set up color values
 
 stimulus.black = [0 0 0];
-stimulus.white = [1/255 1/255 1/255];
+stimulus.white = [255 255 255];
 stimulus.green = [0 160 0];
 stimulus.blue = [0 0 160];
 stimulus.greencorrect = [0 200 20];
