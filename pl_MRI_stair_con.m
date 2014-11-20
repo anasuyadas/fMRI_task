@@ -194,6 +194,13 @@ elseif (task.thistrial.thisseg == 1) % fixation
     stimulus.tmp.respcueLocation=stimulus.randVars.targetLocation(task.thistrial.trialIndex); %if central x
     %stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
     
+    if ~stimulus.testFix1
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
+        stimulus.testFix1  = 1;
+    end
+    
     %just neutral cues - no exo cues
     for i=1:2
         stimulus.tmp.preCueNeutLocation{i}=stimulus.preCueNeutLocation{i};
@@ -229,8 +236,6 @@ if (task.thistrial.thisseg == 9) % ITI
     
     
 elseif (task.thistrial.thisseg == 1) % Initial Fixation
-    
-    
     drawFixation(task);
     if ~stimulus.testFix1
         stimulus.FixationBreak(task.trialnum) = 0;
