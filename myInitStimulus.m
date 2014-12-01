@@ -76,7 +76,7 @@ stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind
 stimulus.locationsEcc = cell(4,1);
 for loc = 1:4;
     stimulus.locationsEcc{loc} = [stimulus.locations{loc}(1)*stimulus.eccentricity,...
-                                   stimulus.locations{loc}(2)*stimulus.eccentricity];
+                                  stimulus.locations{loc}(2)*stimulus.eccentricity];
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

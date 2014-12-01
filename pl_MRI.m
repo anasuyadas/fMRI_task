@@ -81,7 +81,7 @@ n_repeats = 3;%  trials per block n= 36; 3contrast*3ITIs*2location
 %n_repeats will have to be adjusted depending on our TR to keep block
 %length approximately ~5minutes
 
-if diagonal == 2  
+if diagonal == 1  
     [contrast, iti,location,repeats] = ndgrid(1:2,1:3,[1,3],1:n_repeats);
 else 
     [contrast, iti,location,repeats] = ndgrid(1:2,1:3,[2,4],1:n_repeats);
@@ -134,6 +134,28 @@ task{1}.random = 1;
 
 myscreen = initStimulus('stimulus',myscreen);
 stimulus = myInitStimulus(stimulus,myscreen,task,indContrast);
+
+
+%fix stim location coordinates, because mirror in scanner flips the display
+
+respCueCHANGE{1} = stimulus.respcueLocation{2}; respCueCHANGE{2} = stimulus.respcueLocation{1};
+respCueCHANGE{3} = stimulus.respcueLocation{4}; respCueCHANGE{4} = stimulus.respcueLocation{3};
+
+stimulus.respcueLocation{1} = respCueCHANGE{1};
+stimulus.respcueLocation{2} = respCueCHANGE{2};
+stimulus.respcueLocation{3} = respCueCHANGE{3};
+stimulus.respcueLocation{4} = respCueCHANGE{4};
+
+stimLocCHANGE{1} = stimulus.locationsEcc{2}; stimLocCHANGE{2} = stimulus.locationsEcc{1};
+stimLocCHANGE{3} = stimulus.locationsEcc{4}; stimLocCHANGE{4} = stimulus.locationsEcc{3};
+
+stimulus.locationsEcc{1} = stimLocCHANGE{1};
+stimulus.locationsEcc{2} = stimLocCHANGE{2};
+stimulus.locationsEcc{3} = stimLocCHANGE{3};
+stimulus.locationsEcc{4} = stimLocCHANGE{4};
+
+
+
 myscreen = eyeCalibDisp(myscreen);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

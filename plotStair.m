@@ -1,9 +1,7 @@
 numBlocks = 2;
 participant = 'idTestALL_7';
 
-fileNums = ['03';'04']; %which file numbers area the constant stimulus blocks?
-
-% numContrasts = 7;
+fileNums = ['05';'06']; %which file numbers area the constant stimulus blocks?
 
 
 addpath(sprintf('data/%s',participant));
@@ -22,8 +20,7 @@ for block = 1:numBlocks
     plot(stimulus.stair.strength)
     plot(stimulus.stair.reversals,stimulus.stair.strength(stimulus.stair.reversals),'bo')
     
-    plot([0,length(stimulus.stair.strength)],...
-         [threshEst,threshEst],'k-.')
+    plot([0,length(stimulus.stair.strength)], [threshEst,threshEst],'k-.')
      axis(axisVect)
      hold off
 

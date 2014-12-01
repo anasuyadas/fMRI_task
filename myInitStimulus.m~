@@ -76,7 +76,7 @@ stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind
 stimulus.locationsEcc = cell(4,1);
 for loc = 1:4;
     stimulus.locationsEcc{loc} = [stimulus.locations{loc}(1)*stimulus.eccentricity,...
-                                   stimulus.locations{loc}(2)*stimulus.eccentricity];
+                                  stimulus.locations{loc}(2)*stimulus.eccentricity];
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,11 +136,16 @@ respCue.startEcc = 0;
 stimulus.respCue.width =stimulus.FClinewidth;
 stimulus.respcueLocation = cell(4,1);
 
-for loc = 1:4
-        stimulus.respcueLocation{loc} = [0, 0;...
-                                         stimulus.locations{loc}(1)*(respCue.length),...
-                                         stimulus.locations{loc}(2)*(respCue.length)];
-end
+% for loc = 1:4
+%         stimulus.respcueLocation{loc} = [0, 0;...
+%                                          stimulus.locations{loc}(1)*(respCue.length),...
+%                                          stimulus.locations{loc}(2)*(respCue.length)];
+% end
+
+stimulus.respcueLocation{1} = [stimulus.FCloc{1}(1,:);0,0];
+stimulus.respcueLocation{2} = [stimulus.FCloc{2}(1,:);0,0];
+stimulus.respcueLocation{3} = [0,0;stimulus.FCloc{1}(2,:)];
+stimulus.respcueLocation{4} = [0,0;stimulus.FCloc{2}(2,:)];
 
 
 
@@ -155,11 +160,11 @@ end
 % stimulus.preCue.type = 1; %should be always neutral for staircase
 respCue.width =3;
 
-preCue.length = .8;
+preCue.length = 1.2;
 preCue.height = .2;
 preCue.distToStim = .2 + (stimulus.height/2); %distance from center
 
-neutCue.distToFixation = .1 + stimulus.FCwidth; %distance from center
+neutCue.distToFixation = .3 + stimulus.FCwidth; %distance from center
 
 stimulus.preCue.width =3;
 
