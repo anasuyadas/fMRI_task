@@ -56,7 +56,7 @@ myscreen.allowpause = 0;
 myscreen.saveData = -2;
 myscreen.background=.5;
 mglVisualAngleCoordinates(myscreen.displayDistance,myscreen.displaySize)
-
+myscreen = initScreen(myscreen);
 if stimulus.EyeTrack
     myscreen = eyeCalibDisp(myscreen);
 end
@@ -130,7 +130,7 @@ if ~easyFixTask
   fixStimulus.responseTime = 1;
 else
   % make cross bigger and task slower
-  fixStimulus.diskSize = 30;
+  fixStimulus.diskSize = 0.5;
   fixStimulus.fixWidth =.4+1*easyFixTask;
   fixStimulus.fixLineWidth = 2+2*easyFixTask;
   fixStimulus.stimTime = 0.4+0.4*easyFixTask;
@@ -143,7 +143,8 @@ fixStimulus.pos = [0 0];
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 phaseNum = 1;
-mglSimulateRun(1.75,154,0)
+%mglSimulateRun(1.75,154,0)
+
 while (phaseNum <= length(task{1})) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
@@ -166,7 +167,7 @@ end
 function [task, myscreen] = StartSegmentCallback(task, myscreen)
 % segments: 1:ITI,   2:fixation,    3:stimulus, 4:response
 global stimulus
-mglClearScreen(stimulus.grayColor);
+%mglClearScreen(stimulus.grayColor);
 if (task.thistrial.thisseg == 1)
     stimulus.targetOrientation = randsample(0:25:180,1)
      if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 1) 
