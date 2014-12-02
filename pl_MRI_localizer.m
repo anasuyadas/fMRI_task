@@ -49,7 +49,8 @@ clear task myscreen;
 % initalize the screen
 
 stimulus.EyeTrack=Eye;
-myscreen = initScreen('disp2');
+myscreen = initScreen();
+myscreen.background = 'gray';
 myscreen.datadir = datadirname;
 myscreen.allowpause = 0;
 myscreen.saveData = -2;
@@ -66,20 +67,17 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}{1}.waitForBacktick = 1;
-task{1}{1}.segmin =     [1.75 1.75 1.75 1.75 1.75  1.75 1.75];  % run the localizer for each diagonal in each block
-task{1}{1}.segmax =     [1.75 1.75 1.75 1.75 1.75  1.75 1.75];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
-task{1}{1}.segquant =   [0 0];
-task{1}{1}.getResponse = [0 0];
-%task{1}{1}.synchToVol = [1 0 0 0 0 0 0];
-% task{1}{1}.synchToVol(end) = 1;
+task{1}{1}.segmin =     [1.75 1.75 1.75 1.75 1.75  1.75 1.7];  % run the localizer for each diagonal in each block
+task{1}{1}.segmax =     [1.75 1.75 1.75 1.75 1.75  1.75 1.71];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
+task{1}{1}.segquant =   [0 0 0 0 0 0 0 0 0];
+task{1}{1}.getResponse = [0 0 0 0 0 0 0 0 0];
+task{1}{1}.synchToVol = [1 0 0 0 0 0 0];
+
 task{1}{1}.fudgeLastVolume = 1;
 
 n_repeats =5;
 
-
 [contrast,location,repeats] = ndgrid(1,1:2,1:n_repeats);
-
-
 
 %contrast =3 is blank trials. We wants on ~10% of total trials to be blank
 %trials. Re-assign 4 out of 6 blank trials to be non-blank stim containing
@@ -132,7 +130,7 @@ if ~easyFixTask
   fixStimulus.responseTime = 1;
 else
   % make cross bigger and task slower
-  fixStimulus.diskSize = 0.5;
+  fixStimulus.diskSize = 30;
   fixStimulus.fixWidth =.4+1*easyFixTask;
   fixStimulus.fixLineWidth = 2+2*easyFixTask;
   fixStimulus.stimTime = 0.4+0.4*easyFixTask;
@@ -145,7 +143,8 @@ fixStimulus.pos = [0 0];
 % Main display loop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 phaseNum = 1;
-while (phaseNum <= length(task)) && ~myscreen.userHitEsc
+mglSimulateRun(1.75,154,0)
+while (phaseNum <= length(task{1})) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
     [task{1},myscreen,phaseNum] = updateTask(task{1},myscreen,phaseNum);
@@ -167,7 +166,7 @@ end
 function [task, myscreen] = StartSegmentCallback(task, myscreen)
 % segments: 1:ITI,   2:fixation,    3:stimulus, 4:response
 global stimulus
-
+mglClearScreen(stimulus.grayColor);
 if (task.thistrial.thisseg == 1)
     stimulus.targetOrientation = randsample(0:25:180,1)
      if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 1) 
