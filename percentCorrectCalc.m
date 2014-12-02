@@ -22,7 +22,7 @@ for i = 1:2
         numResponses.diagonal{i} =  zeros(1,numContrasts);
 end
 
-diagonal = repmat([1,2],[1,3]);
+diagonal = repmat([1,2],[1,5]);
 
 
 addpath(sprintf('data/%s',participant));

@@ -186,6 +186,14 @@ elseif (task.thistrial.thisseg == 1) % fixation
     stimulus.tmp.respcueLocation=stimulus.randVars.targetLocation(task.thistrial.trialIndex); %if central x
     %stimulus.tmp.WedgeStart=stimulus.CueWedges(task.thistrial.targetLocation);
     
+    if ~stimulus.testFix1 
+        stimulus.FixationBreak(task.trialnum) = 0;
+        stimulus.FixationBreakCurrent = 0;
+        stimulus.updateCurrent = 1;
+        stimulus.upDated = 0;
+        stimulus.testFix1  = 1;
+    end
+   
     if (1 < task.trialnum) && ~stimulus.increasedAttemptNum
         stimulus.trialAttemptNum = stimulus.trialAttemptNum+1;
         stimulus.increasedAttemptNum = 1;
@@ -327,11 +335,11 @@ if ieNotDefined('maxCont'), maxCont = .80; end
 
 cont2 = 10^(log10(minCont*100)+.25*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont3 = 10^(log10(threshCont*100)-.25*(log10(threshCont*100) - log10(minCont*100)))/100;
-cont5 = 10^(log10(threshCont*100)+(1/8)*(log10(maxCont*100) - log10(threshCont*100)))/100;
+cont4 = 10^(log10(threshCont*100)-(1/8)*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
 
 
-contLevels = [minCont,cont2,cont3,threshCont,cont5,cont6,maxCont];
+contLevels = [minCont,cont2,cont3,cont4,threshCont,cont6,maxCont];
 end
 
 %% recalibrateCallback
