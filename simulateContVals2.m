@@ -2,8 +2,8 @@
 
 PF = @PAL_Weibull;
 
-alpha = 0.2;
-beta = 3;
+alpha = 0.1;
+beta = 1.5;
 gamma = 0.5;
 lambda = 0.209;
 
@@ -31,7 +31,7 @@ threshCont = thresh_x+normrnd(0.02,noiseSigStair);
 cont2 = 10^(log10(minCont*100)+.25*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont3 = 10^(log10(threshCont*100)-(1/4)*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont5 = 10^(log10(threshCont*100)-(1/8)*(log10(threshCont*100) - log10(minCont*100)))/100;
-cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
+cont6 = 10^(log10(maxCont*100)-(1/3)*(log10(maxCont*100) - log10(threshCont*100)))/100;
 
 
 contLevels = [minCont,cont2,cont3,cont5,threshCont,cont6,maxCont];

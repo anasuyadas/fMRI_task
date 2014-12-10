@@ -57,19 +57,19 @@ stimulus.IncorrectSound = find(strcmp(MGL.soundNames,'Basso'));
 % stimulus parameters:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % gabors
-stimulus.width = 4;%stimulus.gaussSdx*7;             % in deg
-stimulus.height = 4;%stimulus.gaussSdy*7;            % in deg
+stimulus.width = 3;%stimulus.gaussSdx*7;             % in deg
+stimulus.height = 3;%stimulus.gaussSdy*7;            % in deg
 stimulus.gaussSdx = stimulus.width/7;                % in deg
 stimulus.gaussSdy = stimulus.height/7;               % in deg
-stimulus.sizedg = 3;%should be reset to 3degs
+stimulus.sizedg = 2.25;%should be reset to 3degs
 
 stimulus.rotation = [1,-1]; % this is the tilt orientation of the gabor stimulus from vertical in Degrees
 stimulus.init = 1;
 
-stimulus.sf = 4;                % in cpd
+stimulus.sf = 5;                % in cpd
 stimulus.orientation = 0;       % in deg
 stimulus.phase = 180.*rand(1,task{1}.numTrials); % in deg
-stimulus.eccentricity = 4.6;    % in deg
+stimulus.eccentricity = 5;    % in deg
 
 stimulus.locations = {[-cosd(45),sind(45)];[cosd(45), sind(45)];[cosd(45), -sind(45)];[-cosd(45), -sind(45)]};
 

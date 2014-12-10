@@ -2,7 +2,7 @@
 
 
 numBlocks = 6;
-participant = 'id2';
+participant = 'MO_day2';
 
 fileNums = [1:6]; %which file numbers area the constant stimulus blocks?
 
@@ -22,7 +22,7 @@ for i = 1:2
         numResponses.diagonal{i} =  zeros(1,numContrasts);
 end
 
-diagonal = repmat([1,2],[1,5]);
+diagonal = repmat([2,2],[1,5]);
 
 
 addpath(sprintf('data/%s',participant));
