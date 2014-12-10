@@ -172,10 +172,10 @@ if (task.thistrial.thisseg == 1)
     stimulus.targetOrientation = randsample(0:25:180,1);
      if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 1) 
        stimulus.tmp.targetLocation1= stimulus.eccentricity*[stimulus.locations{1}];
-        stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{2}];
+        stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{4}];
      elseif (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 2)
-         stimulus.tmp.targetLocation1 = stimulus.eccentricity*[stimulus.locations{3}];
-         stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{4}];
+         stimulus.tmp.targetLocation1 = stimulus.eccentricity*[stimulus.locations{2}];
+         stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{3}];
    
      end
 else
@@ -193,7 +193,7 @@ global stimulus;
 
 mglClearScreen(stimulus.grayColor);%###
 
-if ((stimulus.randVars.targetLocation(task.thistrial.trialIndex)) < 3)
+if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) <  3
 
      drawGabor(stimulus.contrasts(stimulus.randVars.contrast(task.thistrial.trialIndex)),...
               stimulus.tmp.targetLocation1,...
