@@ -336,7 +336,7 @@ if ieNotDefined('maxCont'), maxCont = .80; end
 cont2 = 10^(log10(minCont*100)+.25*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont3 = 10^(log10(threshCont*100)-.25*(log10(threshCont*100) - log10(minCont*100)))/100;
 cont4 = 10^(log10(threshCont*100)-(1/8)*(log10(threshCont*100) - log10(minCont*100)))/100;
-cont6 = 10^(log10(maxCont*100)-.25*(log10(maxCont*100) - log10(threshCont*100)))/100;
+cont6 = 10^(log10(maxCont*100)-(1/3)*(log10(maxCont*100) - log10(threshCont*100)))/100;
 
 
 contLevels = [minCont,cont2,cont3,cont4,threshCont,cont6,maxCont];
