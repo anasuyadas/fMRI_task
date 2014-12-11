@@ -67,15 +67,15 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 task{1}{1}.waitForBacktick = 1;
-task{1}{1}.segmin =     [1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.71 ];  % run the localizer for each diagonal in each block
-task{1}{1}.segmax =     [1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.73];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
-task{1}{1}.segquant =   zeros(12,1);
-task{1}{1}.getResponse = zeros(12,1);
-task{1}{1}.synchToVol = [1 0 0 0 0 0 0 0 0 0 0 0 ];
+task{1}{1}.segmin =     [1.75 1.75 1.75 1.75 1.75 1.75 1.75  1.71 ];  % run the localizer for each diagonal in each block
+task{1}{1}.segmax =     [1.75 1.75 1.75 1.75 1.75 1.75 1.75  1.73];  % this assumes a 2s TR... will need to be changed if we change our TR. Basically 16TRs/cycle 
+task{1}{1}.segquant =   zeros(8,1);
+task{1}{1}.getResponse = zeros(8,1);
+task{1}{1}.synchToVol = [1 0 0 0 0 0 0 0];
 
 task{1}{1}.fudgeLastVolume = 1;
 
-n_repeats =5;
+n_repeats =8;
 
 [contrast,location,repeats] = ndgrid(1,1:3,1:n_repeats);
 
@@ -144,7 +144,7 @@ fixStimulus.pos = [0 0];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 phaseNum = 1;
 %mglSimulateRun(1.75,154,0)
-mglSimulateRun(1.75,182,0)
+%mglSimulateRun(1.75,192,0)
 while (phaseNum <= length(task{1})) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
@@ -173,7 +173,7 @@ if (task.thistrial.thisseg == 1)
      if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 1) 
        stimulus.tmp.targetLocation1= stimulus.eccentricity*[stimulus.locations{1}];
         stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{2}];
-     elseif (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 2)
+     else (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 2)
          stimulus.tmp.targetLocation1 = stimulus.eccentricity*[stimulus.locations{3}];
          stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{4}];
    

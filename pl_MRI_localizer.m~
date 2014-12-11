@@ -144,7 +144,7 @@ fixStimulus.pos = [0 0];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 phaseNum = 1;
 %mglSimulateRun(1.75,154,0)
-mglSimulateRun(1.75,182,0)
+%mglSimulateRun(1.75,182,0)
 while (phaseNum <= length(task{1})) && ~myscreen.userHitEsc
     % update the task
     % runs automatically the task, you only need to change: StartSegmentCallback,DrawStimulusCallback,responseCallback
@@ -172,12 +172,15 @@ if (task.thistrial.thisseg == 1)
     stimulus.targetOrientation = randsample(0:25:180,1);
      if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 1) 
        stimulus.tmp.targetLocation1= stimulus.eccentricity*[stimulus.locations{1}];
-        stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{4}];
-     elseif (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 2)
-         stimulus.tmp.targetLocation1 = stimulus.eccentricity*[stimulus.locations{2}];
-         stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{3}];
+        stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{2}];
+     else (stimulus.randVars.targetLocation(task.thistrial.trialIndex) == 2)
+         stimulus.tmp.targetLocation1 = stimulus.eccentricity*[stimulus.locations{3}];
+         stimulus.tmp.targetLocation2= stimulus.eccentricity*[stimulus.locations{4}];
    
      end
+elseif (task.thistrial.thisseg == 12)
+    stimulus.trialnum = stimulus.trialnum + 1;
+    stimulus.targetOrientation= stimulus.targetOrientation + 180/7;
 else
      stimulus.targetOrientation= stimulus.targetOrientation + 180/7;
 end
@@ -193,7 +196,7 @@ global stimulus;
 
 mglClearScreen(stimulus.grayColor);%###
 
-if (stimulus.randVars.targetLocation(task.thistrial.trialIndex) <  3
+if ((stimulus.randVars.targetLocation(task.thistrial.trialIndex)) < 3)
 
      drawGabor(stimulus.contrasts(stimulus.randVars.contrast(task.thistrial.trialIndex)),...
               stimulus.tmp.targetLocation1,...
